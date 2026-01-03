@@ -3,6 +3,7 @@
 {
   imports = [
     # ./example.nix - add your modules here
+    ./syncthing.nix
   ];
 
   environment.systemPackages = [
