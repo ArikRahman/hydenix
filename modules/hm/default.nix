@@ -59,6 +59,48 @@ let
           ExtensionSettings = builtins.listToAttrs extensions;
         };
       };
+
+  hyprsunsetctl = pkgs.writeShellScriptBin "hyprsunsetctl" ''
+    set -euo pipefail
+
+    uid="$(id -u)"
+    base="''${XDG_RUNTIME_DIR:-/run/user/$uid}/hypr"
+    hyprctl_bin="${pkgs.hyprland}/bin/hyprctl"
+
+    if [ ! -d "$base" ]; then
+      echo "hyprsunsetctl: expected Hyprland runtime dir at: $base" >&2
+      exit 1
+    fi
+
+    # Prefer the current shell's instance if it exists.
+    sig=""
+    if [ -n "''${HYPRLAND_INSTANCE_SIGNATURE-}" ] && [ -S "$base/''${HYPRLAND_INSTANCE_SIGNATURE}/.socket.sock" ]; then
+      sig="''${HYPRLAND_INSTANCE_SIGNATURE}"
+    else
+      # Otherwise, probe candidates (newest first) until one responds.
+      while IFS= read -r d; do
+        [ -n "$d" ] || continue
+        csig="$(basename "$d")"
+        if HYPRLAND_INSTANCE_SIGNATURE="$csig" "$hyprctl_bin" -j monitors >/dev/null 2>&1; then
+          sig="$csig"
+          break
+        fi
+      done < <(
+        for d in "$base"/*; do
+          [ -S "$d/.socket.sock" ] || continue
+          echo "$(stat -c '%Y %n' "$d")"
+        done | sort -nr | awk '{print $2}'
+      )
+    fi
+
+    if [ -z "${sig:-}" ]; then
+      echo "hyprsunsetctl: couldn't find a Hyprland instance socket in: $base" >&2
+      exit 1
+    fi
+
+    export HYPRLAND_INSTANCE_SIGNATURE="$sig"
+    exec "$hyprctl_bin" hyprsunset "$@"
+  '';
 in
 {
   imports = [
@@ -118,6 +160,11 @@ in
     discordo
     blesh
     fzf
+
+    # Preferred over screen shaders: hyprsunset uses Hyprland's CTM control,
+    # so the filter won't show up in screenshots / recordings.
+    hyprsunset
+    hyprsunsetctl
     # pkgs.vscode - hydenix's vscode version
     # pkgs.userPkgs.vscode - your personal nixpkgs version
   ];
@@ -145,7 +192,7 @@ in
     '';
   };
 
-    programs.atuin = {
+  programs.atuin = {
     enable = true;
     settings = {
       search_mode = "fuzzy";
@@ -221,6 +268,43 @@ in
 
   # hydenix home-manager options go here
   hydenix.hm.enable = true;
+
+  # Prefer hyprsunset over Hyprland screen shaders so the effect isn't captured
+  # by screenshots / recordings.
+  hydenix.hm.hyprland.shaders.active = "disable";
+
+  # hyprsunset configuration (~/.config/hypr/hyprsunset.conf)
+  xdg.configFile."hypr/hyprsunset.conf".text = ''
+    max-gamma = 150
+
+    profile {
+        time = 7:30
+        identity = true
+    }
+
+    profile {
+        time = 21:00
+        temperature = 4500
+        gamma = 1.0
+    }
+  '';
+
+  # Start hyprsunset automatically in the user session.
+  systemd.user.services.hyprsunset = {
+    Unit = {
+      Description = "Hyprsunset (night light)";
+      PartOf = [ "graphical-session.target" ];
+      After = [ "graphical-session.target" ];
+    };
+    Service = {
+      ExecStart = "${pkgs.hyprsunset}/bin/hyprsunset";
+      Restart = "on-failure";
+      RestartSec = 2;
+    };
+    Install = {
+      WantedBy = [ "graphical-session.target" ];
+    };
+  };
   hydenix.hm.hyprland.extraConfig = ''
     cursor {
         no_hardware_cursors = true
