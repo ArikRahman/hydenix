@@ -276,6 +276,23 @@ in
   home.sessionVariables.BROWSER = "zen";
   home.sessionVariables.FILEMANAGER = "nautilus";
 
+  # Default terminal preference.
+  # HyDE commonly launches terminals via `xdg-terminal-exec`, which consults
+  # `xdg-terminals.list` preference files. Putting Ghostty first makes
+  # terminal keybinds/launchers prefer it without uninstalling Kitty.
+  home.sessionVariables.TERMINAL = "ghostty";
+
+  # Preferred terminal list for xdg-terminal-exec (Default Terminal spec impl).
+  # This file is read from `$XDG_CONFIG_HOME/xdg-terminal-exec/xdg-terminals.list`.
+  xdg.configFile."xdg-terminal-exec/xdg-terminals.list".text = ''
+    ghostty
+    kitty
+  '';
+
+  # NOTE (mistake & correction): I initially also managed `.config/xdg-terminals.list`.
+  # Hydenix already manages that target, so Home Manager raised a conflict.
+  # The fix is to only manage the `xdg-terminal-exec` preference file here.
+
 
   # hydenix home-manager options go here
   hydenix.hm.enable = true;
