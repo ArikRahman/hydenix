@@ -101,6 +101,14 @@ let
     export HYPRLAND_INSTANCE_SIGNATURE="$sig"
     exec "$hyprctl_bin" hyprsunset "$@"
   '';
+
+  # Hydenix theme selection
+  #
+  # IMPORTANT: `SUPER + SHIFT + T` changes the theme at runtime, but Hydenix will
+  # revert to whatever is configured in Nix on the next rebuild/relog/reboot.
+  # Set this to the exact theme name shown by the theme picker to make it
+  # persist across `nixos-rebuild`.
+  desiredTheme = "Catppuccin Mocha";
 in
 {
   imports = [
@@ -152,6 +160,7 @@ in
     spacedrive
     neohtop
     nautilus
+    obsidian
 
     seahorse
     gh
@@ -177,7 +186,7 @@ in
     enableZshIntegration = true;
     settings = {
       background-opacity = "0.9";
-      theme = "Catppuccin Mocha";
+      theme = desiredTheme;
     };
   };
   
@@ -202,7 +211,7 @@ in
   programs.zed-editor = {
     enable = true;
     userSettings = {
-      theme = "Catppuccin Mocha"; # or Latte/Frappe/Macchiato depending on what the extension provides
+      theme = desiredTheme; # must match an installed Zed theme name
       ui_font_size = 16;
       buffer_font_size = 14;
       terminal = {
@@ -228,7 +237,7 @@ in
       jnoortheen.nix-ide
     ];
     userSettings = {
-      "workbench.colorTheme" = "Catppuccin Mocha";
+      "workbench.colorTheme" = desiredTheme;
     };
   };
 
@@ -271,6 +280,9 @@ in
   # hydenix home-manager options go here
   hydenix.hm.enable = true;
   hydenix.hm.dolphin.enable = false;
+
+  # This is the setting Hydenix uses as the source-of-truth on rebuild.
+  hydenix.hm.theme.active = desiredTheme;
 
   # Prefer hyprsunset over Hyprland screen shaders so the effect isn't captured
   # by screenshots / recordings.
