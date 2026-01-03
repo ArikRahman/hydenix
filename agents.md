@@ -15,6 +15,6 @@ Hydenix is a NixOS configuration template using Flakes. It allows users to custo
 
 ## Development Guidelines
 
-- When modifying configuration, prefer editing `configuration.nix` or files in `modules/`.
+- When modifying configuration, prefer editing for home manager, or files in `modules/`.
 - Ensure `flake.nix` is updated if new inputs are required.
 - Follow Nix language best practices.
