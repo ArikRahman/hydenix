@@ -80,7 +80,8 @@
     # For more configuration options, see: ./docs/options.md
   };
 
-  services.gnome.gnome-keyring.enable = true;
+  
+  services.gnome.gnome-keyring.enable = true;  
 
   nix.settings = {
     substituters = [
