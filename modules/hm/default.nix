@@ -127,6 +127,11 @@ in
 
   programs.vscode = {
     enable = true;
+    package = pkgs.vscode.overrideAttrs (oldAttrs: {
+      postFixup = (oldAttrs.postFixup or "") + ''
+        wrapProgram $out/bin/code --add-flags "--password-store=gnome-libsecret"
+      '';
+    });
     extensions = with pkgs.vscode-extensions; [
       catppuccin.catppuccin-vsc
       jnoortheen.nix-ide
@@ -172,6 +177,72 @@ in
 
   # hydenix home-manager options go here
   hydenix.hm.enable = true;
+  hydenix.hm.hyprland.extraConfig = ''
+    cursor {
+        no_hardware_cursors = true
+    }
+  '';
   hydenix.hm.editors.vscode.enable = false;
+  hydenix.hm.theme.themes = [
+    "1 Bit"
+    "AbyssGreen"
+    "Abyssal Wave"
+    "Amethyst Aura"
+    "AncientAliens"
+    "Another World"
+    "Bad Blood"
+    "BlueSky"
+    "Breezy Autumn"
+    "Cat Latte"
+    "Catppuccin Latte"
+    "Catppuccin Macchiato"
+    "Catppuccin Mocha"
+    "Code Garden"
+    "Cosmic Blue"
+    "Crimson Blade"
+    "Crimson Blue"
+    "Decay Green"
+    "DoomBringers"
+    "Dracula"
+    "Edge Runner"
+    "Electra"
+    "Eternal Arctic"
+    "Ever Blushing"
+    "Frosted Glass"
+    "Graphite Mono"
+    "Green Lush"
+    "Greenify"
+    "Grukai"
+    "Gruvbox Retro"
+    "Hack the Box"
+    "Ice Age"
+    "Joker"
+    "LimeFrenzy"
+    "Mac OS"
+    "Material Sakura"
+    "Monokai"
+    "Monterey Frost"
+    "Moonlight"
+    "Nightbrew"
+    "Nordic Blue"
+    "Obsidian Purple"
+    "One Dark"
+    "Oxo Carbon"
+    "Paranoid Sweet"
+    "Peace Of Mind"
+    "Pixel Dream"
+    "Rain Dark"
+    "Red Stone"
+    "Rose Pine"
+    "Scarlet Night"
+    "Sci fi"
+    "Solarized Dark"
+    "Synth Wave"
+    "Timeless Dream"
+    "Tokyo Night"
+    "Tundra"
+    "Vanta Black"
+    "Windows 11"
+  ];
   # Visit https://github.com/richen604/hydenix/blob/main/docs/options.md for more options
 }
