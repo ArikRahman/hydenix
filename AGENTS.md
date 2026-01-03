@@ -18,3 +18,5 @@ Hydenix is a NixOS configuration template using Flakes. It allows users to custo
 - When modifying configuration, prefer editing for home manager, or files in `modules/`.
 - Ensure `flake.nix` is updated if new inputs are required.
 - Follow Nix language best practices.
+
+- > z hydenix; sudo nixos-rebuild switch --flake .#hydenix command to update nixos
