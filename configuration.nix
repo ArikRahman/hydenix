@@ -82,6 +82,7 @@
 
   
   services.gnome.gnome-keyring.enable = true;  
+  services.gvfs.enable = true;
 
   nix.settings = {
     substituters = [

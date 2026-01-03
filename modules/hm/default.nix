@@ -260,14 +260,17 @@ in
     "x-scheme-handler/http"  = [ "zen.desktop" ];
     "x-scheme-handler/https" = [ "zen.desktop" ];
     "text/html"              = [ "zen.desktop" ];
+    "inode/directory"        = [ "org.gnome.Nautilus.desktop" ];
   };
 
   # Optional: some CLI tools consult $BROWSER.
   home.sessionVariables.BROWSER = "zen";
+  home.sessionVariables.FILEMANAGER = "nautilus";
 
 
   # hydenix home-manager options go here
   hydenix.hm.enable = true;
+  hydenix.hm.dolphin.enable = false;
 
   # Prefer hyprsunset over Hyprland screen shaders so the effect isn't captured
   # by screenshots / recordings.
