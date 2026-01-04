@@ -20,7 +20,7 @@ Hydenix is a NixOS configuration template using Flakes. It allows users to custo
 - Follow Nix language best practices.
 - Comment thoroughly on why you're adding something
 - everytime you make a mistake, comment what you got wrong and how you corrected it
-- instead of debugging from terminal, dump output into log workflow
+- instead of debugging from terminal, dump output into log text file workflow
 
 - > z hydenix; sudo nixos-rebuild switch --flake .#hydenix 
 - ^ command to update nixos

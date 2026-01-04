@@ -115,11 +115,11 @@
         "nixpkgs": "nixpkgs_3"
       },
       "locked": {
-        "lastModified": 1767337333,
-        "narHash": "sha256-MFFQ4M3IC7CH6y0aQPjqgrCJ31/QwFruJWeeIraN6eQ=",
+        "lastModified": 1767469777,
+        "narHash": "sha256-qYDTc7rhJ7mUOYtNCqVQZqad/tdweldlmPzAEyz6sTo=",
         "owner": "richen604",
         "repo": "hydenix",
-        "rev": "7578c135000fd1e000a3857c950241abc2486043",
+        "rev": "4948c21ded5bb8eeeb6d153aa433397f8a45f6c0",
         "type": "github"
       },
       "original": {

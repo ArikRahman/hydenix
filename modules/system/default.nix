@@ -3,6 +3,7 @@
 {
   imports = [
     # ./example.nix - add your modules here
+    ./plasma6.nix
     ./syncthing.nix
   ];
 
