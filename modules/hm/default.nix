@@ -147,7 +147,7 @@ in
     # dorion
     syncthing
     cachix
-    
+
     blesh
     localsend
 
@@ -161,6 +161,7 @@ in
     neohtop
     nautilus
     obsidian
+    qbittorrent
 
     seahorse
     gh
@@ -169,6 +170,10 @@ in
     discordo
     blesh
     fzf
+    lazygit
+    ripgrep-all
+    nil
+
 
     # Preferred over screen shaders: hyprsunset uses Hyprland's CTM control,
     # so the filter won't show up in screenshots / recordings.
@@ -189,7 +194,7 @@ in
       theme = desiredTheme;
     };
   };
-  
+
   programs.yazi.enable = true;
 
 
@@ -222,6 +227,8 @@ in
           };
         };
       };
+      # Add Nix language support extension for syntax highlighting and features
+      extensions = [ "zed-industries.extensions.nix" ];
     };
   };
 
@@ -255,7 +262,7 @@ in
     enableNushellIntegration = true;
   };
 
-    
+
 
   services.gnome-keyring = {
     enable = true;
