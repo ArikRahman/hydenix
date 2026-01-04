@@ -165,7 +165,6 @@ in
     legcord
 
     seahorse
-    gh
     atool
     httpie
     discordo
