@@ -1,4 +1,10 @@
-{ inputs, pkgs, lib, config, ... }:
+{
+  inputs,
+  pkgs,
+  lib,
+  config,
+  ...
+}:
 
 let
   username = config.home.username;
@@ -25,8 +31,7 @@ let
   extension = shortId: guid: {
     name = guid;
     value = {
-      install_url =
-        "https://addons.mozilla.org/en-US/firefox/downloads/latest/${shortId}/latest.xpi";
+      install_url = "https://addons.mozilla.org/en-US/firefox/downloads/latest/${shortId}/latest.xpi";
       installation_mode = "normal_installed";
     };
   };
@@ -43,22 +48,18 @@ let
     (extension "private-grammar-checker-harper" "harper@writewithharper.com")
   ];
 
-  zenWrapped =
-    pkgs.wrapFirefox
-      inputs.zen-browser.packages.${pkgs.system}.zen-browser-unwrapped
-      {
-        extraPrefs = lib.concatLines (
-          lib.mapAttrsToList (
-            name: value:
-              ''lockPref(${lib.strings.toJSON name}, ${lib.strings.toJSON value});''
-          ) prefs
-        );
+  zenWrapped = pkgs.wrapFirefox inputs.zen-browser.packages.${pkgs.system}.zen-browser-unwrapped {
+    extraPrefs = lib.concatLines (
+      lib.mapAttrsToList (
+        name: value: ''lockPref(${lib.strings.toJSON name}, ${lib.strings.toJSON value});''
+      ) prefs
+    );
 
-        extraPolicies = {
-          DisableTelemetry = true;
-          ExtensionSettings = builtins.listToAttrs extensions;
-        };
-      };
+    extraPolicies = {
+      DisableTelemetry = true;
+      ExtensionSettings = builtins.listToAttrs extensions;
+    };
+  };
 
   hyprsunsetctl = pkgs.writeShellScriptBin "hyprsunsetctl" ''
     set -euo pipefail
@@ -93,7 +94,7 @@ let
       )
     fi
 
-    if [ -z "${sig:-}" ]; then
+    if [ -z "${"sig:-"}" ]; then
       echo "hyprsunsetctl: couldn't find a Hyprland instance socket in: $base" >&2
       exit 1
     fi
@@ -153,7 +154,6 @@ in
 
     #inputs.zen-browser.packages.${pkgs.system}.default
 
-
     ayugram-desktop
     boxflat
     swaybg
@@ -162,6 +162,7 @@ in
     nautilus
     obsidian
     qbittorrent
+    legcord
 
     seahorse
     gh
@@ -173,7 +174,9 @@ in
     lazygit
     ripgrep-all
     nil
-
+    nixd
+    gh
+    marksman
 
     # Preferred over screen shaders: hyprsunset uses Hyprland's CTM control,
     # so the filter won't show up in screenshots / recordings.
@@ -183,7 +186,7 @@ in
     # pkgs.userPkgs.vscode - your personal nixpkgs version
   ];
 
-    programs.ghostty = {
+  programs.ghostty = {
     enable = true;
     package = pkgs.ghostty;
     enableBashIntegration = true;
@@ -196,7 +199,6 @@ in
   };
 
   programs.yazi.enable = true;
-
 
   programs.bash = {
     enable = true;
@@ -248,35 +250,36 @@ in
     };
   };
 
-    programs.nushell = {
+  programs.nushell = {
     enable = true;
 
     # Use config.nu from this same directory (next to home.nix)
     configFile.source = ./config.nu; # Home Manager supports configFile.source for Nushell. [web:1][web:17]
   };
 
-    programs.zoxide = {
+  programs.zoxide = {
     enable = true;
     enableBashIntegration = true;
     enableFishIntegration = true;
     enableNushellIntegration = true;
   };
 
-
-
   services.gnome-keyring = {
     enable = true;
-    components = [ "pkcs11" "secrets" "ssh" ];
+    components = [
+      "pkcs11"
+      "secrets"
+      "ssh"
+    ];
   };
 
-
-    # Make Zen the default browser (xdg-open, portals, file managers)
+  # Make Zen the default browser (xdg-open, portals, file managers)
   xdg.mimeApps.enable = true;
   xdg.mimeApps.defaultApplications = {
-    "x-scheme-handler/http"  = [ "zen.desktop" ];
+    "x-scheme-handler/http" = [ "zen.desktop" ];
     "x-scheme-handler/https" = [ "zen.desktop" ];
-    "text/html"              = [ "zen.desktop" ];
-    "inode/directory"        = [ "org.gnome.Nautilus.desktop" ];
+    "text/html" = [ "zen.desktop" ];
+    "inode/directory" = [ "org.gnome.Nautilus.desktop" ];
   };
 
   # Optional: some CLI tools consult $BROWSER.
@@ -299,7 +302,6 @@ in
   # NOTE (mistake & correction): I initially also managed `.config/xdg-terminals.list`.
   # Hydenix already manages that target, so Home Manager raised a conflict.
   # The fix is to only manage the `xdg-terminal-exec` preference file here.
-
 
   # hydenix home-manager options go here
   hydenix.hm.enable = true;
