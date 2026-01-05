@@ -22,6 +22,8 @@ Hydenix is a NixOS configuration template using Flakes. It allows users to custo
 - everytime you make a mistake, comment what you got wrong and how you corrected it
 - instead of debugging from terminal, dump output into log text file workflow
 - stop deleting lines, and rather, comment them out and make note of why you are getting rid of them
+- if i have to do a command, the goal of nix is to make things reproducible. make note of it in appendix.md
+- if you're troubleshooting, use troubleshooting.md to log complex things
 
 ## Decision Log / Gotchas
 
