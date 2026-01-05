@@ -140,27 +140,23 @@
   # User Account Setup - REQUIRED: Change "hydenix" to your desired username (must match above)
   users.users.hydenix = {
     isNormalUser = true;
-
-    # Steam/Proton fix (ext4 ownership):
-    # Your external Steam library disk is ext4 and many Steam/Proton prefixes are owned by uid 1000.
-    # Wine refuses to use a prefix if it is not owned by the invoking user (it will fail with
-    # `.../compatdata/<appid>/pfx is not owned by you`).
-    #
-    # Pinning this user to uid 1000 makes file ownership line up with what already exists on disk.
-    #
-    # NOTE (mistake & correction):
-    # I originally tried only adjusting mountpoint permissions, but for ext4 the file ownership is
-    # stored on-disk; mount options don’t remap uid/gid like NTFS/exFAT. The correct fix is to align
-    # the user’s uid with the on-disk ownership.
-    uid = 1000;
-
+    #Mistake: changing UID, doesnt have to change for steam to work with external ssd
     initialPassword = "hydenix"; # SECURITY: Change this password after first login with `passwd`
     extraGroups = [
       "wheel"
       "networkmanager"
       "video"
     ]; # User groups (determines permissions)
-    shell = pkgs.zsh; # Default shell (options: pkgs.bash, pkgs.zsh, pkgs.fish)
+    # Default login shell.
+    #
+    # Why Nushell:
+    # - You’re using Nushell (see project notes), so making it the login shell keeps interactive CLI behavior consistent.
+    # - We already enable `programs.nushell` in Home Manager; setting it here ensures your TTY/login shell matches too.
+    #
+    # NOTE (mistake & correction):
+    # I initially considered only configuring Nushell in Home Manager, but that would not change the actual
+    # login shell for the user account. `users.users.<name>.shell` is the NixOS source-of-truth for that.
+    shell = pkgs.nushell;
   };
 
   # Hydenix Configuration - Main configuration for the Hydenix desktop environment

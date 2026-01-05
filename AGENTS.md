@@ -29,15 +29,6 @@ My repo is https://github.com/ArikRahman/hydenix
 
 ## Decision Log / Gotchas
 
-### Steam external disk + Proton prefixes: UID ownership must match
-- Symptom: Steam game launches then immediately stops; logs show:
-  - `wine: '<steamapps>/compatdata/<appid>/pfx' is not owned by you`
-- Root cause: The Steam library lives on an ext4 filesystem whose on-disk ownership is by numeric UID. If the user account UID changes (or differs from the UID that created the SteamLibrary), Proton/Wine refuses to use the prefix.
-- Project decision: Standardize the primary user `hydenix` to **UID 1000** to match existing external disk ownership (many SteamLibrary paths were owned by UID 1000).
-- Rationale: This avoids expensive/risky recursive `chown -R` across a large Steam library and makes ownership stable across desktop environments (Hyprland/Plasma) and mount mechanisms.
-- Future conflict warning:
-  - If you ever create/recreate users, ensure `users.users.hydenix.uid = 1000;` remains true.
-  - If another account already uses UID 1000, resolve that conflict before rebuilding (either migrate that account or pick a consistent UID and migrate disk ownership intentionally).
 
 - > z hydenix; sudo nixos-rebuild switch --flake .#hydenix 
 - ^ command to update nixos
