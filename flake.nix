@@ -27,18 +27,24 @@
   outputs =
     { ... }@inputs:
     let
-      system = "x86_64-linux";
+      # NOTE (mistake & correction):
+      # I originally used a local `system` binding, but newer nixpkgs warns that the
+      # argument name `system` is deprecated in favor of `stdenv.hostPlatform.system`.
+      # Here we rename the binding to `hostSystem` to avoid that warning and make
+      # intent explicit.
+      hostSystem = "x86_64-linux";
 
-      /* 
+      /*
         we define pkgs using hydenix's nixpkgs, this allows some options for extending hydenix
 
         1. uncomment `inputs.nixpkgs.follows = "nixpkgs";` in the hydenix input above to always use the latest nixpkgs
         2. control your own nixpkgs by changing `inputs.hydenix.inputs.nixpkgs` below to `inputs.nixpkgs`
         3. add overlays below to extend and version pin incrementally
-
       */
       pkgs = import inputs.hydenix.inputs.nixpkgs {
-        inherit system;
+        # Use the new naming convention: the value is still "x86_64-linux", but we
+        # keep it under `hostSystem` to avoid the deprecated `system` binding name.
+        system = hostSystem;
         config.allowUnfree = true;
         overlays = [
           inputs.hydenix.overlays.default
@@ -47,7 +53,9 @@
 
       # again if you want to control your own nixpkgs, remove `inputs.hydenix` below and keep `inputs.nixpkgs`
       hydenixConfig = inputs.hydenix.inputs.nixpkgs.lib.nixosSystem {
-        inherit system pkgs;
+        # nixosSystem still expects `system`; we pass our `hostSystem` value.
+        system = hostSystem;
+        inherit pkgs;
         specialArgs = {
           inherit inputs;
         };
@@ -65,6 +73,6 @@
     {
       nixosConfigurations.hydenix = hydenixConfig;
       nixosConfigurations.default = hydenixConfig;
-      packages.${system}.vm = vmConfig.config.system.build.vm;
+      packages.${hostSystem}.vm = vmConfig.config.system.build.vm;
     };
 }

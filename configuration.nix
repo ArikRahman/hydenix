@@ -3,8 +3,23 @@
   pkgs,
   ...
 }:
-  # FOLLOW THE BELOW INSTRUCTIONS LINE BY LINE TO SET UP YOUR SYSTEM
+# FOLLOW THE BELOW INSTRUCTIONS LINE BY LINE TO SET UP YOUR SYSTEM
 {
+  # External Steam library disk (ext4 inside LUKS).
+  #
+  # Why this exists:
+  # Steam/Proton failed with: `compatdata/.../pfx is not owned by you`
+  # because the disk was being mounted in a way that made created files look
+  # like they were owned by a different user (so Wine refuses to use them).
+  #
+  # Fix approach:
+  # - Mount the filesystem declaratively via NixOS (not desktop automount),
+  #   and set ownership/permissions explicitly after mount.
+  #
+  # NOTE (mistake & correction):
+  # I first assumed this might be NTFS/exFAT (where uid/gid mount options matter),
+  # but your `lsblk -f` shows ext4. For ext4, ownership is real on-disk, so we
+  # ensure the mountpoint is owned correctly and keep permissions stable.
   imports = [
     # hydenix inputs - Required modules, don't modify unless you know what you're doing
     inputs.hydenix.inputs.home-manager.nixosModules.home-manager
@@ -44,7 +59,14 @@
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;
-    backupFileExtension = "backup";
+
+    # NOTE (mistake & correction):
+    # Home Manager attempted to back up an existing file (e.g. `~/.config/mimeapps.list`)
+    # to `~/.config/mimeapps.list.backup`, but that backup path already existed
+    # (`mimeapps.list.backup`), so activation failed to avoid clobbering it.
+    # Changing the backup extension avoids the collision.
+    backupFileExtension = "hm-bak";
+
     extraSpecialArgs = { inherit inputs; };
     # User Configuration - REQUIRED: Change "hydenix" to your actual username
     # This must match the username you define in users.users below
@@ -58,9 +80,80 @@
       };
   };
 
+  # Mount the external ext4 volume (arik's disk) in a stable location, managed by NixOS.
+  #
+  # IMPORTANT:
+  # - We intentionally use `/mnt/arik_s_disk` (no spaces) to avoid path edge-cases with tools.
+  # - Your Steam library can be moved to `/mnt/arik_s_disk/SteamLibrary`.
+  #
+  # References from your `lsblk -f`:
+  # - LUKS UUID: 72a8054a-d009-430c-9b0f-1cd570933865
+  # - Inner ext4 UUID (label "arik's disk"): d87233ac-1c17-4f0d-9304-c4b28315667b
+  #
+  # NOTE:
+  # If you already have manual/desktop automount at `/run/media/...`, this will replace it
+  # for your workflow (use the new path in Steam).
+  fileSystems."/mnt/arik_s_disk" = {
+    device = "/dev/disk/by-uuid/d87233ac-1c17-4f0d-9304-c4b28315667b";
+    fsType = "ext4";
+    options = [
+      "nofail"
+      "x-systemd.automount"
+      "x-systemd.idle-timeout=1min"
+
+      # GNOME/Nautilus visibility fix:
+      # Nautilus primarily shows "external drives" when they come from UDisks/GVFS.
+      # This disk is mounted declaratively via NixOS (fstab/systemd), so it can be
+      # mounted but not listed as a device in Nautilus.
+      #
+      # We don't want to change your stable mount or Steam path, so instead we:
+      # 1) mark it as a user mount (helps some desktop integrations)
+      # 2) add a persistent "Places" bookmark (below) so Nautilus shows it in the sidebar
+      "user"
+    ];
+  };
+
+  # Ensure the mountpoint is owned by your user so Steam/Proton can create prefixes that
+  # are owned by you (Wine refuses to use prefixes not owned by the invoking user).
+  systemd.tmpfiles.rules = [
+    "d /mnt/arik_s_disk 0755 hydenix users - -"
+
+    # GNOME/Nautilus sidebar entry:
+    # Nautilus reads GTK bookmarks from `~/.config/gtk-3.0/bookmarks`.
+    # Creating this file declaratively gives you a stable entry even when the disk
+    # is mounted via systemd automount (as it is now).
+    #
+    # NOTE (mistake & correction):
+    # I initially focused on "making Nautilus detect the device", but since this is
+    # an fstab/systemd mount, the most reliable fix is a bookmark rather than trying
+    # to force UDisks to own the mount.
+    "d /home/hydenix/.config 0755 hydenix users - -"
+    "d /home/hydenix/.config/gtk-3.0 0755 hydenix users - -"
+    # NOTE (mistake & correction):
+    # I previously used an apostrophe in the tmpfiles file-content field.
+    # systemd-tmpfiles treats some characters as specifier/escape syntax in arguments,
+    # which caused: "Failed to substitute specifiers in argument: Invalid slot".
+    # Using a label without an apostrophe avoids tmpfiles parsing issues reliably.
+    "f /home/hydenix/.config/gtk-3.0/bookmarks 0644 hydenix users - file:///mnt/arik_s_disk ariks%20disk\n"
+  ];
+
   # User Account Setup - REQUIRED: Change "hydenix" to your desired username (must match above)
   users.users.hydenix = {
     isNormalUser = true;
+
+    # Steam/Proton fix (ext4 ownership):
+    # Your external Steam library disk is ext4 and many Steam/Proton prefixes are owned by uid 1000.
+    # Wine refuses to use a prefix if it is not owned by the invoking user (it will fail with
+    # `.../compatdata/<appid>/pfx is not owned by you`).
+    #
+    # Pinning this user to uid 1000 makes file ownership line up with what already exists on disk.
+    #
+    # NOTE (mistake & correction):
+    # I originally tried only adjusting mountpoint permissions, but for ext4 the file ownership is
+    # stored on-disk; mount options don’t remap uid/gid like NTFS/exFAT. The correct fix is to align
+    # the user’s uid with the on-disk ownership.
+    uid = 1000;
+
     initialPassword = "hydenix"; # SECURITY: Change this password after first login with `passwd`
     extraGroups = [
       "wheel"
@@ -80,8 +173,7 @@
     # For more configuration options, see: ./docs/options.md
   };
 
-  
-  services.gnome.gnome-keyring.enable = true;  
+  services.gnome.gnome-keyring.enable = true;
   services.gvfs.enable = true;
 
   nix.settings = {

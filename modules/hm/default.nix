@@ -177,6 +177,11 @@ in
     gh
     marksman
 
+    curl
+    wget
+    unzip
+    protontricks
+
     # Preferred over screen shaders: hyprsunset uses Hyprland's CTM control,
     # so the filter won't show up in screenshots / recordings.
     hyprsunset
@@ -198,6 +203,34 @@ in
   };
 
   programs.yazi.enable = true;
+
+  # Git config is managed declaratively to avoid tools (like `gh`) trying to write to
+  # a read-only/symlinked config (common when Home Manager manages XDG paths).
+  #
+  # NOTE (mistake & correction):
+  # I initially set `programs.git.userName` / `programs.git.userEmail` here, but Hydenix
+  # already defines `programs.git.settings.user.email = false` in its own git module.
+  # That produced a type conflict (string vs false). To stop conflicting with Hydenix,
+  # we only configure the GitHub URL rewrite here and let Hydenix (or you) own identity.
+  programs.git = {
+    enable = true;
+
+    # Intentionally NOT setting `userName` / `userEmail` here to avoid conflicting with Hydenix.
+
+    # NOTE (mistake & correction):
+    # Home Manager renamed `programs.git.extraConfig` to `programs.git.settings`.
+    # Updating to the new option removes evaluation warnings.
+    settings = {
+      # Prefer HTTPS for GitHub (matches `gh`'s recommended default).
+      url."https://github.com/".insteadOf = [
+        "git@github.com:"
+        "ssh://git@github.com/"
+      ];
+
+      # Optional: keep the default branch consistent with GitHub UI.
+      init.defaultBranch = "main";
+    };
+  };
 
   programs.bash = {
     enable = true;
@@ -240,12 +273,20 @@ in
         wrapProgram $out/bin/code --add-flags "--password-store=gnome-libsecret"
       '';
     });
-    extensions = with pkgs.vscode-extensions; [
-      catppuccin.catppuccin-vsc
-      jnoortheen.nix-ide
-    ];
-    userSettings = {
-      "workbench.colorTheme" = desiredTheme;
+
+    # NOTE (mistake & correction):
+    # Home Manager renamed:
+    # - `programs.vscode.extensions` -> `programs.vscode.profiles.default.extensions`
+    # - `programs.vscode.userSettings` -> `programs.vscode.profiles.default.userSettings`
+    # Updating to the new option names removes evaluation warnings.
+    profiles.default = {
+      extensions = with pkgs.vscode-extensions; [
+        catppuccin.catppuccin-vsc
+        jnoortheen.nix-ide
+      ];
+      userSettings = {
+        "workbench.colorTheme" = desiredTheme;
+      };
     };
   };
 
