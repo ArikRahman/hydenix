@@ -76,7 +76,7 @@
     #
     # We keep *one* backup extension here (this is the NixOS module source-of-truth) and
     # pick a value that won't collide with the already-existing `mimeapps.list.hm-bak`.
-    backupFileExtension = "hm-bak2";
+    backupFileExtension = "hm-bak3";
 
     extraSpecialArgs = { inherit inputs; };
     # User Configuration - REQUIRED: Change "hydenix" to your actual username

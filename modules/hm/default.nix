@@ -222,6 +222,7 @@ in
     clojure
     clojure-lsp
     babashka
+    jdk25 # LTS until 2031
     nil
     nixd
     ruff
