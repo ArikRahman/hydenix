@@ -24,6 +24,7 @@ Hydenix is a NixOS configuration template using Flakes. It allows users to custo
 - stop deleting lines, and rather, comment them out and make note of why you are getting rid of them
 - if i have to do a command, the goal of nix is to make things reproducible. make note of it in appendix.md
 - if you're troubleshooting, use troubleshooting.md to log complex things
+- im using nushell btw. use semicolons and other nushell syntax 
 
 ## Decision Log / Gotchas
 
