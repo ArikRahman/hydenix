@@ -163,6 +163,9 @@ in
     obsidian
     qbittorrent
     legcord
+    obs-studio
+    reaper
+    logseq
 
     seahorse
     atool
