@@ -58,6 +58,48 @@ let
     extraPolicies = {
       DisableTelemetry = true;
       ExtensionSettings = builtins.listToAttrs extensions;
+
+      # Custom search engines (Firefox/Zen enterprise policies).
+      #
+      # NOTE:
+      # - This config is modeled after the reference `configuration.nix` you shared.
+      # - These show up as selectable search engines; `Default` sets the default.
+      # - Brave here refers to **Brave Search**, not the Brave browser.
+      SearchEngines = {
+        Default = "Brave Search";
+        Add = [
+          {
+            Name = "Brave Search";
+            URLTemplate = "https://search.brave.com/search?q={searchTerms}";
+            IconURL = "https://search.brave.com/favicon.ico";
+            Alias = "@bs";
+          }
+          {
+            Name = "nixpkgs packages";
+            URLTemplate = "https://search.nixos.org/packages?query={searchTerms}";
+            IconURL = "https://wiki.nixos.org/favicon.ico";
+            Alias = "@np";
+          }
+          {
+            Name = "NixOS options";
+            URLTemplate = "https://search.nixos.org/options?query={searchTerms}";
+            IconURL = "https://wiki.nixos.org/favicon.ico";
+            Alias = "@no";
+          }
+          {
+            Name = "NixOS Wiki";
+            URLTemplate = "https://wiki.nixos.org/w/index.php?search={searchTerms}";
+            IconURL = "https://wiki.nixos.org/favicon.ico";
+            Alias = "@nw";
+          }
+          {
+            Name = "noogle";
+            URLTemplate = "https://noogle.dev/q?term={searchTerms}";
+            IconURL = "https://noogle.dev/favicon.ico";
+            Alias = "@ng";
+          }
+        ];
+      };
     };
   };
 

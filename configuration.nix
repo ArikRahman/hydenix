@@ -5,6 +5,15 @@
 }:
 # FOLLOW THE BELOW INSTRUCTIONS LINE BY LINE TO SET UP YOUR SYSTEM
 {
+  # Home Manager backup behavior:
+  #
+  # NOTE (mistake & correction):
+  # I previously added `home-manager.backupFileExtension` here at the top level, but that duplicates
+  # the setting already defined inside the `home-manager = { ... }` block below, causing:
+  #   "attribute 'home-manager.backupFileExtension' already defined"
+  #
+  # The correct approach is to keep a single setting in the `home-manager` block (as `backupFileExtension = ...;`)
+  # and not define `home-manager.backupFileExtension` separately.
   # External Steam library disk (ext4 inside LUKS).
   #
   # Why this exists:
@@ -62,10 +71,12 @@
 
     # NOTE (mistake & correction):
     # Home Manager attempted to back up an existing file (e.g. `~/.config/mimeapps.list`)
-    # to `~/.config/mimeapps.list.backup`, but that backup path already existed
-    # (`mimeapps.list.backup`), so activation failed to avoid clobbering it.
-    # Changing the backup extension avoids the collision.
-    backupFileExtension = "hm-bak";
+    # to `~/.config/mimeapps.list.<backup-extension>`, but that backup path already existed,
+    # so activation failed to avoid clobbering it.
+    #
+    # We keep *one* backup extension here (this is the NixOS module source-of-truth) and
+    # pick a value that won't collide with the already-existing `mimeapps.list.hm-bak`.
+    backupFileExtension = "hm-bak2";
 
     extraSpecialArgs = { inherit inputs; };
     # User Configuration - REQUIRED: Change "hydenix" to your actual username
