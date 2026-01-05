@@ -212,19 +212,27 @@ in
     seahorse
     atool
     httpie
-    discordo
+    discordo # terminal discord
     blesh
     fzf
     lazygit
     ripgrep-all
+    zellij
+
+    clojure
+    clojure-lsp
+    babashka
     nil
     nixd
+    ruff
     gh
     marksman
 
     curl
     wget
     unzip
+    pandoc # document converter
+
     protontricks
 
     # Preferred over screen shaders: hyprsunset uses Hyprland's CTM control,
