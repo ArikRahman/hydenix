@@ -330,7 +330,37 @@ in
   # HyDE commonly launches terminals via `xdg-terminal-exec`, which consults
   # `xdg-terminals.list` preference files. Putting Ghostty first makes
   # terminal keybinds/launchers prefer it without uninstalling Kitty.
+  #
+  # NOTE (mistake & correction):
+  # I initially treated this as a simple "default terminal" preference issue.
+  # That does not override a hardcoded Hyprland keybind that explicitly runs `kitty`.
+  # The correct fix is to also define/override the Hyprland keybind source-of-truth
+  # via Hydenix's Hyprland keybindings module (below).
   home.sessionVariables.TERMINAL = "ghostty";
+
+  # Hyprland keybind override (HyDE):
+  # Force `SUPER + T` to launch Ghostty instead of Kitty, regardless of HyDE defaults.
+  #
+  # Rationale: Some HyDE configs hardcode `kitty` in the terminal keybind.
+  # Managing it here makes the behavior reproducible across rebuilds.
+  hydenix.hm.hyprland.keybindings.extraConfig = ''
+    # Terminal: Ghostty
+    #
+    # NOTE (mistake & correction):
+    # I previously added a second `SUPER + T` bind which caused *both* actions to
+    # trigger (HyDE's default kitty bind + this ghostty bind).
+    #
+    # Hyprland doesn't have an "unbind" directive for prior binds in included
+    # configs, but it *does* support consuming the key with a `pass` bind.
+    # We consume `SUPER + T` first so the earlier kitty bind won't run, then we
+    # re-bind it to Ghostty.
+    #
+    # If you still see both terminals, it means HyDE loads another bind *after*
+    # this extraConfig; in that case, switch this from `extraConfig` to
+    # `overrideConfig` in the Hydenix Hyprland module implementation.
+    bind = SUPER, T, pass
+    bind = SUPER, T, exec, ghostty
+  '';
 
   # Preferred terminal list for xdg-terminal-exec (Default Terminal spec impl).
   # This file is read from `$XDG_CONFIG_HOME/xdg-terminal-exec/xdg-terminals.list`.

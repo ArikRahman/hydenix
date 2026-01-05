@@ -1,4 +1,4 @@
-# Hydenix Project Context for AI Agents
+# Hydenix Project Context for AI Agents, an index for referencing relevant project documents
 
 ## Project Overview
 Hydenix is a NixOS configuration template using Flakes. It allows users to customize their NixOS setup, add packages, and configure themes. Based off https://github.com/richen604/hydenix
@@ -22,7 +22,7 @@ My repo is https://github.com/ArikRahman/hydenix
 - Comment thoroughly on why you're adding something
 - everytime you make a mistake, comment what you got wrong and how you corrected it
 - instead of debugging from terminal, dump output into log text file workflow
-- stop deleting lines, and rather, comment them out and make note of why you are getting rid of them
+- stop deleting lines, and rather, comment them out and make note of why you are getting rid of them. get rid of clutter and revise comments as necessary though. be precise
 - if i have to do a command, the goal of nix is to make things reproducible. make note of it in appendix.md
 - if you're troubleshooting, use troubleshooting.md to log complex things
 - im using nushell btw. use semicolons and other nushell syntax 
