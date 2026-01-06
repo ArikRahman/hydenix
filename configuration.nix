@@ -112,6 +112,17 @@
       "x-systemd.automount"
       "x-systemd.idle-timeout=1min"
 
+      # Steam/Proton runtime fix:
+      # This ext4 volume is used as a Steam library, and SteamLinuxRuntime (Pressure-Vessel)
+      # needs to execute helper entry-points from within `steamapps/common/*Runtime*/`.
+      # If this mount has `noexec`, Steam will fail with:
+      #   ...SteamLinuxRuntime_sniper/_v2-entry-point: Permission denied
+      #
+      # We explicitly allow execution on this mount to support Steam runtimes.
+      # (If you want a stricter setup, keep `noexec` and move the Steam library/runtimes
+      # back to an internal `exec` filesystem.)
+      "exec"
+
       # GNOME/Nautilus visibility fix:
       # Nautilus primarily shows "external drives" when they come from UDisks/GVFS.
       # This disk is mounted declaratively via NixOS (fstab/systemd), so it can be
