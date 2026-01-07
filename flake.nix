@@ -60,7 +60,7 @@
           # NOTE: If the flake source is "dirty", Nix may provide `self.dirtyRev`.
           # If neither revision is available, this becomes `null`.
           (
-            { lib, ... }:
+            { ... }:
             {
               system.configurationRevision = inputs.self.rev or inputs.self.dirtyRev or null;
             }

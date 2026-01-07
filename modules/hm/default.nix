@@ -349,12 +349,19 @@ in
         wrapProgram $out/bin/code --add-flags "--password-store=gnome-libsecret"
       '';
     });
-    extensions = with pkgs.vscode-extensions; [
-      catppuccin.catppuccin-vsc
-      jnoortheen.nix-ide
-    ];
-    userSettings = {
-      "workbench.colorTheme" = desiredTheme;
+
+    # NOTE: Home Manager renamed:
+    # - `programs.vscode.extensions`   -> `programs.vscode.profiles.default.extensions`
+    # - `programs.vscode.userSettings` -> `programs.vscode.profiles.default.userSettings`
+    profiles.default = {
+      extensions = with pkgs.vscode-extensions; [
+        catppuccin.catppuccin-vsc
+        jnoortheen.nix-ide
+      ];
+
+      userSettings = {
+        "workbench.colorTheme" = desiredTheme;
+      };
     };
   };
 
