@@ -154,6 +154,7 @@ in
 
     #inputs.zen-browser.packages.${pkgs.system}.default
 
+    #Applications
     ayugram-desktop
     boxflat
     swaybg
@@ -163,8 +164,15 @@ in
     obsidian
     qbittorrent
     legcord
+    reaper
+    logseq
+    obs-studio
 
     seahorse
+
+    #Terminal tools
+    unzip
+    wget
     atool
     httpie
     discordo
@@ -172,10 +180,25 @@ in
     fzf
     lazygit
     ripgrep-all
+    gh
+    #LSP and language tooling
+    clojure-lsp
     nil
     nixd
-    gh
     marksman
+    ruff # python rust based
+
+    zellij
+
+    #Language
+    babashka
+    clojure
+    clojure-lsp
+    curl
+    jdk25
+
+    pandoc
+    protontricks
 
     # Preferred over screen shaders: hyprsunset uses Hyprland's CTM control,
     # so the filter won't show up in screenshots / recordings.
