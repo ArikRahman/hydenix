@@ -3,7 +3,7 @@
   pkgs,
   ...
 }:
-  # FOLLOW THE BELOW INSTRUCTIONS LINE BY LINE TO SET UP YOUR SYSTEM
+# FOLLOW THE BELOW INSTRUCTIONS LINE BY LINE TO SET UP YOUR SYSTEM
 {
   imports = [
     # hydenix inputs - Required modules, don't modify unless you know what you're doing
@@ -44,7 +44,7 @@
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;
-    backupFileExtension = "backup";
+    backupFileExtension = "backup2";
     extraSpecialArgs = { inherit inputs; };
     # User Configuration - REQUIRED: Change "hydenix" to your actual username
     # This must match the username you define in users.users below
@@ -80,8 +80,7 @@
     # For more configuration options, see: ./docs/options.md
   };
 
-  
-  services.gnome.gnome-keyring.enable = true;  
+  services.gnome.gnome-keyring.enable = true;
   services.gvfs.enable = true;
 
   nix.settings = {
