@@ -9,3 +9,4 @@ but this command fixes it ```rm -rf ~/.config/hyde/themes \
      
 Do ```booted="$(readlink -f /run/booted-system)" 
 ls -l /nix/var/nix/profiles/system-*-link | grep -F "$booted"``` to see what nix generation you're on
+- dota 2 audio cuts out whenf inding match, fix with launch option ```-sdlaudiodriver pulse```
