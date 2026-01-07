@@ -29,13 +29,12 @@
     let
       system = "x86_64-linux";
 
-      /* 
+      /*
         we define pkgs using hydenix's nixpkgs, this allows some options for extending hydenix
 
         1. uncomment `inputs.nixpkgs.follows = "nixpkgs";` in the hydenix input above to always use the latest nixpkgs
         2. control your own nixpkgs by changing `inputs.hydenix.inputs.nixpkgs` below to `inputs.nixpkgs`
         3. add overlays below to extend and version pin incrementally
-
       */
       pkgs = import inputs.hydenix.inputs.nixpkgs {
         inherit system;
@@ -52,6 +51,21 @@
           inherit inputs;
         };
         modules = [
+          # Record the flake's Git revision into the built system closure so each
+          # NixOS generation can be mapped back to the exact commit.
+          #
+          # Query it with:
+          #   nixos-version --configuration-revision
+          #
+          # NOTE: If the flake source is "dirty", Nix may provide `self.dirtyRev`.
+          # If neither revision is available, this becomes `null`.
+          (
+            { lib, ... }:
+            {
+              system.configurationRevision = inputs.self.rev or inputs.self.dirtyRev or null;
+            }
+          )
+
           ./configuration.nix
         ];
       };
