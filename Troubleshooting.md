@@ -6,3 +6,6 @@ but this command fixes it ```rm -rf ~/.config/hyde/themes \
        ~/.local/share/wallbash \
        ~/.local/share/waybar/styles \
        ~/.vscode/extensions/prasanthrangan.wallbash```
+     
+Do ```booted="$(readlink -f /run/booted-system)" 
+ls -l /nix/var/nix/profiles/system-*-link | grep -F "$booted"``` to see what nix generation you're on
