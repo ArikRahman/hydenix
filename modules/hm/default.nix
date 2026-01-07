@@ -262,9 +262,16 @@ in
     discordo
     blesh
     fzf
+    yq # yaml processor and json as well
     lazygit
-    ripgrep-all
+    ripgrep-all # rga, ripgrep with extra file format support
     gh
+    just
+    bottom # rust based top
+    zenith # more traditional top based on rust
+    nvd # useful for seeing difference in nix generations. syntax e.g.
+    # ```nvd diff /nix/var/nix/profiles/system-31-link /nix/var/nix/profiles/system-30-link```
+
     #LSP and language tooling
     clojure-lsp
     nil
