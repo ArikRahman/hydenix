@@ -60,5 +60,5 @@ The Loop
 Key insight: By reading task_plan.md before each decision, goals stay in the attention window. This is how Manus handles ~50 tool calls without losing track.
 
 
-- > z hydenix; sudo nixos-rebuild switch --flake .#hydenix 
+- > z dotfiles; sudo nixos-rebuild switch --flake .#hydenix 
 - ^ command to update nixos

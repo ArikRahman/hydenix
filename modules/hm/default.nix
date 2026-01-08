@@ -198,6 +198,10 @@ in
 {
   imports = [
     # ./example.nix - add your modules here
+
+    # Keep HyDE state dirs (themes, wallbash cache, waybar styles, etc.) mutable/local,
+    # while still letting Nix/Home Manager manage the actual config files (ex: config.toml).
+    ./overrides/hyde-local-state.nix
   ];
 
   systemd.user.paths.fix-ariks-disk-perms = {
