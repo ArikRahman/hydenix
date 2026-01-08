@@ -15,7 +15,7 @@ Hydenix is a NixOS configuration template using Flakes. It allows users to custo
 
 ## Development Guidelines
 
-- mandatory to use Manus workflow every time
+- mandatory to use Manus workflow every time, use folder called manus for documentation for manus worfklow
 - When modifying configuration, prefer editing for home manager, or files in `modules/`.
 - Ensure `flake.nix` is updated if new inputs are required.
 - Follow Nix language best practices.

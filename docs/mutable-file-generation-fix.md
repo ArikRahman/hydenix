@@ -7,6 +7,10 @@ This repo is based on Hydenix (flake) and uses Home Manager through Hydenix’s 
 
 …that pause is typically **Home Manager copying files/directories** into your `$HOME` so they’re writable (“mutable”). If a large directory tree is marked mutable (themes, caches, editor profiles, wallpapers, etc.), it can easily turn into multi‑GB reads/writes every activation.
 
+In your case, the activation script shows a clear pattern: Hydenix/HyDE theme **package outputs from `/nix/store/.../share/hyde/themes/<ThemeName>`** are being copied into:
+
+- `~/.config/hyde/themes/<ThemeName>`
+
 This document shows how to **identify what is being copied** and the **practical ways to stop the expensive copy** in this Hydenix layout.
 
 ---
@@ -59,6 +63,14 @@ What you’re looking for:
 - Whether it is copying individual files or recursively copying directories
 - Any obvious “big trees” (e.g. `~/.config/hyde/themes`, wallpapers, caches, `~/.local/share` trees, etc.)
 
+#### What the pattern looks like (real-world example)
+In the activation script, you’ll typically see lines like:
+
+- `Copying mutable file: '/nix/store/<hash>-<ThemeName>/share/hyde/themes/<ThemeName>' -> '.config/hyde/themes/<ThemeName>'`
+- followed by a recursive copy (`cp -r ... '/nix/store/.../share/hyde/themes/<ThemeName>'/. '.config/hyde/themes/<ThemeName>'`)
+
+That is the expensive part: it is copying a full theme directory tree out of the Nix store into `~/.config/hyde/themes/` for every theme included.
+
 ---
 
 ## 2) Where it likely comes from in this repo
@@ -80,7 +92,7 @@ That is a strong hint: the big copying is probably Hydenix trying to “manage�
 
 ## 3) Typical root causes
 
-### Cause A: A directory tree is marked `mutable = true`
+### Cause A: HyDE themes are being installed as “mutable” directories under `~/.config/hyde/themes`
 Hydenix’s `mutable.nix` concept (documented in the upstream FAQ) extends options like:
 
 - `home.file`
@@ -89,7 +101,15 @@ Hydenix’s `mutable.nix` concept (documented in the upstream FAQ) extends optio
 
 …with a `mutable` flag. When set, Home Manager **copies** instead of symlinking so the path becomes writable.
 
-If the target is a directory with lots of data, activation becomes I/O heavy.
+In your observed case, the mutable-copy list includes HyDE theme directories coming from the Nix store such as:
+
+- `/nix/store/<hash>-<ThemeName>/share/hyde/themes/<ThemeName>`
+
+and they are copied into:
+
+- `~/.config/hyde/themes/<ThemeName>`
+
+If you have many themes (or theme folders include large wallpapers/assets), activation becomes I/O heavy.
 
 ### Cause B: Accidentally managing runtime caches/state declaratively
 Paths like these are almost always a bad idea to manage as store-backed files:
@@ -158,7 +178,25 @@ For example:
 
 Use this checklist once you know the copied targets.
 
-### 5.1 If any of these show up in the copied list, treat them as state
+### 5.1 If HyDE theme packages are being copied into `~/.config/hyde/themes`, that’s the primary target
+If your activation log shows theme package paths like:
+
+- `/nix/store/<hash>-<ThemeName>/share/hyde/themes/<ThemeName>`
+
+being copied to:
+
+- `~/.config/hyde/themes/<ThemeName>`
+
+…then `~/.config/hyde/themes` is acting like a “mutable install location” for HyDE themes, and Home Manager is re-copying those directories during `mutableFileGeneration`.
+
+**Desired behavior (performance-friendly):**
+- Avoid “mutable copy” of *entire theme directories* each activation.
+- Either:
+  - install fewer themes (reduces copy set), or
+  - stop treating the theme directories as mutable-copied content, or
+  - keep `~/.config/hyde/themes` as purely local state that HyDE manages itself (not Home Manager).
+
+### 5.2 Treat these as state unless you have a strong reason otherwise
 Common HyDE/Wallbash state dirs:
 
 - `~/.config/hyde/themes`

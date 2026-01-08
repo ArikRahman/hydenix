@@ -13,9 +13,9 @@ Reduce the ~1m+ pause during Home Manager activation caused by `mutableFileGener
 ## Phases
 
 ### Phase 0 — Setup (tracking + logs)
-- [ ] Create `dotfiles/docs/notes.md` for findings and pasted logs.
+- [x] Create `dotfiles/docs/notes.md` for findings and pasted logs.
 - [ ] Create `dotfiles/docs/deliverable.md` for the final “what changed + why + how to verify” writeup.
-- [ ] Create `dotfiles/docs/logs/` directory for captured command outputs.
+- [x] Create `dotfiles/docs/logs/` directory for captured command outputs.
 
 **Outputs**
 - `dotfiles/docs/notes.md`
@@ -32,6 +32,7 @@ Steps:
 - [ ] Dump the relevant activation script section to a log file:
   - Extract lines around `mutableFileGeneration`, `mutableGeneration`, or “Copying mutable home files”.
   - Extract the file list / rsync / cp commands that enumerate targets.
+  - Save raw output to `dotfiles/docs/logs/hm-activate-mutableFileGeneration.txt` so we can diff before/after changes.
 - [ ] Record:
   - Which paths are being copied
   - Total size / largest directories
