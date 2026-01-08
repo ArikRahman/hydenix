@@ -15,7 +15,7 @@ Hydenix is a NixOS configuration template using Flakes. It allows users to custo
 
 ## Development Guidelines
 
-- use Manus workflow
+- mandatory to use Manus workflow every time
 - When modifying configuration, prefer editing for home manager, or files in `modules/`.
 - Ensure `flake.nix` is updated if new inputs are required.
 - Follow Nix language best practices.
@@ -24,7 +24,7 @@ Hydenix is a NixOS configuration template using Flakes. It allows users to custo
 - instead of debugging from terminal, dump output into log text file workflow
 - stop deleting lines, and rather, comment them out and make note of why you are getting rid of them
 ----------
-According to manus:
+Manus workflow - According to manus:
 Why This Skill?
 
 On December 29, 2025, Meta acquired Manus for $2 billion. In just 8 months, Manus went from launch to $100M+ revenue. Their secret? Context engineering.

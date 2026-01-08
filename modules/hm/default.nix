@@ -290,7 +290,17 @@ in
     clojure
     clojure-lsp
     curl
-    jdk25
+    # NOTE (mistake & correction):
+    # I originally included both `jdk25` and `graalvmPackages.graalvm-ce`.
+    # That causes a Home Manager `pkgs.buildEnv` collision because both ship
+    # `/lib/src.zip`:
+    #   - .../openjdk-25.../lib/src.zip
+    #   - .../graalvm-ce-25.../lib/src.zip
+    #
+    # Fix: rely on GraalVM's bundled JDK instead of adding a separate JDK.
+    # If you *need* a standalone JDK too, we can add it back using a collision-
+    # safe approach (e.g. separate profile, split packages, or buildEnv ignoreCollisions).
+    # jdk25
     graalvmPackages.graalvm-ce
 
     pandoc
