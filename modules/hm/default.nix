@@ -291,7 +291,7 @@ in
     clojure-lsp
     curl
     jdk25
-    graalvm-ce
+    graalvmPackages.graalvm-ce
 
     pandoc
     protontricks
