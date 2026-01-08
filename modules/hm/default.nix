@@ -287,6 +287,7 @@ in
     clojure-lsp
     curl
     jdk25
+    graalvm-ce
 
     pandoc
     protontricks
