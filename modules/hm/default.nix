@@ -48,100 +48,103 @@ let
     (extension "private-grammar-checker-harper" "harper@writewithharper.com")
   ];
 
-  zenWrapped = pkgs.wrapFirefox inputs.zen-browser.packages.${pkgs.system}.zen-browser-unwrapped {
-    extraPrefs = lib.concatLines (
-      lib.mapAttrsToList (
-        name: value: ''lockPref(${lib.strings.toJSON name}, ${lib.strings.toJSON value});''
-      ) prefs
-    );
+  zenWrapped =
+    pkgs.wrapFirefox
+      inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.zen-browser-unwrapped
+      {
+        extraPrefs = lib.concatLines (
+          lib.mapAttrsToList (
+            name: value: ''lockPref(${lib.strings.toJSON name}, ${lib.strings.toJSON value});''
+          ) prefs
+        );
 
-    extraPolicies = {
-      DisableTelemetry = true;
-      ExtensionSettings = builtins.listToAttrs extensions;
+        extraPolicies = {
+          DisableTelemetry = true;
+          ExtensionSettings = builtins.listToAttrs extensions;
 
-      # Custom search engines (Firefox/Zen enterprise policies).
+          # Custom search engines (Firefox/Zen enterprise policies).
 
-      #
+          #
 
-      # NOTE:
+          # NOTE:
 
-      # - This config is modeled after the reference `configuration.nix` you shared.
+          # - This config is modeled after the reference `configuration.nix` you shared.
 
-      # - These show up as selectable search engines; `Default` sets the default.
+          # - These show up as selectable search engines; `Default` sets the default.
 
-      # - Brave here refers to **Brave Search**, not the Brave browser.
+          # - Brave here refers to **Brave Search**, not the Brave browser.
 
-      SearchEngines = {
+          SearchEngines = {
 
-        Default = "Brave Search";
+            Default = "Brave Search";
 
-        Add = [
+            Add = [
 
-          {
+              {
 
-            Name = "Brave Search";
+                Name = "Brave Search";
 
-            URLTemplate = "https://search.brave.com/search?q={searchTerms}";
+                URLTemplate = "https://search.brave.com/search?q={searchTerms}";
 
-            IconURL = "https://search.brave.com/favicon.ico";
+                IconURL = "https://search.brave.com/favicon.ico";
 
-            Alias = "@bs";
+                Alias = "@bs";
 
-          }
+              }
 
-          {
+              {
 
-            Name = "nixpkgs packages";
+                Name = "nixpkgs packages";
 
-            URLTemplate = "https://search.nixos.org/packages?query={searchTerms}";
+                URLTemplate = "https://search.nixos.org/packages?query={searchTerms}";
 
-            IconURL = "https://wiki.nixos.org/favicon.ico";
+                IconURL = "https://wiki.nixos.org/favicon.ico";
 
-            Alias = "@np";
+                Alias = "@np";
 
-          }
+              }
 
-          {
+              {
 
-            Name = "NixOS options";
+                Name = "NixOS options";
 
-            URLTemplate = "https://search.nixos.org/options?query={searchTerms}";
+                URLTemplate = "https://search.nixos.org/options?query={searchTerms}";
 
-            IconURL = "https://wiki.nixos.org/favicon.ico";
+                IconURL = "https://wiki.nixos.org/favicon.ico";
 
-            Alias = "@no";
+                Alias = "@no";
 
-          }
+              }
 
-          {
+              {
 
-            Name = "NixOS Wiki";
+                Name = "NixOS Wiki";
 
-            URLTemplate = "https://wiki.nixos.org/w/index.php?search={searchTerms}";
+                URLTemplate = "https://wiki.nixos.org/w/index.php?search={searchTerms}";
 
-            IconURL = "https://wiki.nixos.org/favicon.ico";
+                IconURL = "https://wiki.nixos.org/favicon.ico";
 
-            Alias = "@nw";
+                Alias = "@nw";
 
-          }
+              }
 
-          {
+              {
 
-            Name = "noogle";
+                Name = "noogle";
 
-            URLTemplate = "https://noogle.dev/q?term={searchTerms}";
+                URLTemplate = "https://noogle.dev/q?term={searchTerms}";
 
-            IconURL = "https://noogle.dev/favicon.ico";
+                IconURL = "https://noogle.dev/favicon.ico";
 
-            Alias = "@ng";
+                Alias = "@ng";
 
-          }
+              }
 
-        ];
+            ];
 
+          };
+        };
       };
-    };
-  };
 
   # NOTE: Disabled per request to remove hyprsunset from this repo.
   #
@@ -240,7 +243,7 @@ in
     blesh
     localsend
 
-    #inputs.zen-browser.packages.${pkgs.system}.default
+    #inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
 
     #Applications
     ayugram-desktop
