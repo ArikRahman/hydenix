@@ -1,0 +1,4 @@
+=== permissions for dmesg ===
+kernel.dmesg_restrict = 1
+uid=1001(hydenix) gid=100(users) groups=100(users),1(wheel),26(video),57(networkmanager)
+users wheel video networkmanager

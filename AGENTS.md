@@ -47,7 +47,7 @@ The Solution: 3-File Pattern
 For every complex task, create THREE files:
 
 task_plan.md      → Track phases and progress
-notes.md          → Store research and findings
+notes.md          → Store research and findings, only in notes.md, not a separate findings file
 [deliverable].md  → Final output
 
 The Loop

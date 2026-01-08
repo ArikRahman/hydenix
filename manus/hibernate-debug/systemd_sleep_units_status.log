@@ -1,0 +1,41 @@
+=== check systemd sleep handlers ===
+○ systemd-suspend.service - System Suspend
+     Loaded: loaded (/etc/systemd/system/systemd-suspend.service; linked; preset: ignored)
+     Active: inactive (dead)
+       Docs: man:systemd-suspend.service(8)
+
+Jan 08 16:58:32 hydenix systemd[1]: Starting System Suspend...
+Jan 08 16:58:32 hydenix systemd-sleep[38597]: Successfully froze unit 'user.slice'.
+Jan 08 16:58:32 hydenix systemd-sleep[38597]: Performing sleep operation 'suspend'...
+Jan 08 16:58:41 hydenix systemd-sleep[38597]: System returned from sleep operation 'suspend'.
+Jan 08 16:58:41 hydenix systemd-sleep[38597]: Successfully thawed unit 'user.slice'.
+Jan 08 16:58:41 hydenix systemd[1]: systemd-suspend.service: Deactivated successfully.
+Jan 08 16:58:41 hydenix systemd[1]: Finished System Suspend.
+
+○ systemd-hibernate.service - System Hibernate
+     Loaded: loaded (/etc/systemd/system/systemd-hibernate.service; linked; preset: ignored)
+     Active: inactive (dead)
+       Docs: man:systemd-hibernate.service(8)
+
+Jan 08 16:58:56 hydenix systemd[1]: Starting System Hibernate...
+Jan 08 16:58:56 hydenix systemd-sleep[40024]: Successfully froze unit 'user.slice'.
+Jan 08 16:58:56 hydenix systemd-sleep[40024]: Performing sleep operation 'hibernate'...
+Jan 08 16:59:57 hydenix systemd-sleep[40024]: System returned from sleep operation 'hibernate'.
+Jan 08 16:59:57 hydenix systemd-sleep[40024]: Successfully thawed unit 'user.slice'.
+Jan 08 16:59:57 hydenix systemd[1]: systemd-hibernate.service: Deactivated successfully.
+Jan 08 16:59:57 hydenix systemd[1]: Finished System Hibernate.
+Jan 08 16:59:57 hydenix systemd[1]: systemd-hibernate.service: Consumed 2.318s CPU time, 1.7M memory peak, 60K read from disk, 36K written to disk.
+
+○ systemd-hybrid-sleep.service - System Hybrid Suspend+Hibernate
+     Loaded: loaded (/etc/systemd/system/systemd-hybrid-sleep.service; linked; preset: ignored)
+     Active: inactive (dead)
+       Docs: man:systemd-hybrid-sleep.service(8)
+
+○ systemd-suspend-then-hibernate.service - System Suspend then Hibernate
+     Loaded: loaded (/etc/systemd/system/systemd-suspend-then-hibernate.service; linked; preset: ignored)
+     Active: inactive (dead)
+       Docs: man:systemd-suspend-then-hibernate.service(8)
+
+=== sleep.conf runtime ===
+[Sleep]
+

@@ -1,0 +1,4 @@
+=== check resume= kernel param ===
+initrd=\EFI\nixos\asxdr44yz2kdliciwadk90aycazf1fhh-initrd-linux-zen-6.18.2-initrd.efi init=/nix/store/rbdlg9wm74jb6lazn0blkwarsak0gw3w-nixos-system-hydenix-26.05.20251229.95e96e8/init snd_hda_intel.power_save=0 snd_hda_intel.power_save_controller=N loglevel=4 lsm=landlock,yama,bpf
+
+=== check initrd resume config (nixos-option) ===

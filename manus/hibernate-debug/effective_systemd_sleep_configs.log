@@ -1,0 +1,15 @@
+=== logind + sleep.conf effective configs ===
+# /etc/systemd/logind.conf -> /nix/store/1vmc0nb11a7jxgqhhfb32l74757gm9kz-etc-systemd-logind.conf
+[Login]
+KillUserProcesses=false
+
+
+
+# Main configuration file systemd/logind.conf.d/*.conf not found
+
+# /etc/systemd/sleep.conf -> /nix/store/d13dz69gbs4pvwy2by94r94zmx1rl276-etc-systemd-sleep.conf
+[Sleep]
+
+
+
+# Main configuration file systemd/sleep.conf.d/*.conf not found

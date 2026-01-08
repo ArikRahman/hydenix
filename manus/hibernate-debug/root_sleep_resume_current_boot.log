@@ -1,0 +1,303 @@
+=== root sleep/hibernate journal (current boot) ===
+Jan 08 16:53:33 hydenix systemd[1]: Starting User Login Management...
+Jan 08 16:53:33 hydenix systemd-logind[908]: New seat seat0.
+Jan 08 16:53:33 hydenix systemd-logind[908]: Watching system buttons on /dev/input/event10 (Power Button)
+Jan 08 16:53:33 hydenix systemd-logind[908]: Watching system buttons on /dev/input/event7 (Lid Switch)
+Jan 08 16:53:33 hydenix systemd-logind[908]: Watching system buttons on /dev/input/event9 (Power Button)
+Jan 08 16:53:33 hydenix systemd-logind[908]: Watching system buttons on /dev/input/event8 (Sleep Button)
+Jan 08 16:53:33 hydenix systemd-logind[908]: Watching system buttons on /dev/input/event2 (Razer Razer Viper Ultimate Dongle Keyboard)
+Jan 08 16:53:33 hydenix systemd-logind[908]: Watching system buttons on /dev/input/event4 (Razer Razer Viper Ultimate Dongle)
+Jan 08 16:53:33 hydenix systemd-logind[908]: Watching system buttons on /dev/input/event5 (Dell Dell USB Keyboard)
+Jan 08 16:53:33 hydenix systemd-logind[908]: Watching system buttons on /dev/input/event0 (AT Translated Set 2 keyboard)
+Jan 08 16:53:33 hydenix systemd-logind[908]: Watching system buttons on /dev/input/event18 (Acer WMI hotkeys)
+Jan 08 16:53:33 hydenix systemd[1]: Started User Login Management.
+Jan 08 16:54:12 hydenix systemd-logind[908]: New session 'c1' of user 'sddm' with class 'greeter' and type 'wayland'.
+Jan 08 16:54:12 hydenix systemd-logind[908]: New session '1' of user 'sddm' with class 'manager-early' and type 'unspecified'.
+Jan 08 16:54:23 hydenix systemd-logind[908]: New session '2' of user 'hydenix' with class 'user' and type 'wayland'.
+Jan 08 16:54:23 hydenix systemd-logind[908]: New session '3' of user 'hydenix' with class 'manager' and type 'unspecified'.
+Jan 08 16:54:23 hydenix systemd-logind[908]: Session c1 logged out. Waiting for processes to exit.
+Jan 08 16:54:23 hydenix systemd-logind[908]: Removed session c1.
+Jan 08 16:54:33 hydenix systemd-logind[908]: Removed session 1.
+Jan 08 16:58:32 hydenix systemd-logind[908]: The system will suspend now!
+Jan 08 16:58:41 hydenix systemd-logind[908]: Operation 'suspend' finished.
+Jan 08 16:58:55 hydenix systemd-logind[908]: The system will hibernate now!
+Jan 08 16:58:56 hydenix systemd[1]: Starting System Hibernate...
+Jan 08 16:58:56 hydenix systemd-sleep[40024]: Successfully froze unit 'user.slice'.
+Jan 08 16:58:56 hydenix systemd-sleep[40024]: Performing sleep operation 'hibernate'...
+Jan 08 16:59:57 hydenix systemd-sleep[40024]: System returned from sleep operation 'hibernate'.
+Jan 08 16:59:57 hydenix systemd-sleep[40024]: Successfully thawed unit 'user.slice'.
+Jan 08 16:59:57 hydenix systemd[1]: systemd-hibernate.service: Deactivated successfully.
+Jan 08 16:59:57 hydenix systemd[1]: Finished System Hibernate.
+Jan 08 16:59:57 hydenix systemd[1]: systemd-hibernate.service: Consumed 2.318s CPU time, 1.7M memory peak, 60K read from disk, 36K written to disk.
+Jan 08 16:59:57 hydenix systemd-logind[908]: Operation 'hibernate' finished.
+
+=== root kernel messages (power mgmt) ===
+[Thu Jan  8 16:54:18 2026] BIOS-e820: [mem 0x0000000084441000-0x0000000084449fff] ACPI data
+[Thu Jan  8 16:54:18 2026] BIOS-e820: [mem 0x0000000098d6e000-0x0000000099bcdfff] ACPI NVS
+[Thu Jan  8 16:54:18 2026] BIOS-e820: [mem 0x0000000099bce000-0x0000000099c4dfff] ACPI data
+[Thu Jan  8 16:54:18 2026] efi: ACPI=0x99c4d000 ACPI 2.0=0x99c4d014 TPMFinalLog=0x99b79000 ESRT=0x97de1018 SMBIOS=0x97de0000 SMBIOS 3.0=0x97dde000 RNG=0x99bd2f18 INITRD=0x8444d818 TPMEventLog=0x84441018 
+[Thu Jan  8 16:54:18 2026] ACPI: Early table checksum verification disabled
+[Thu Jan  8 16:54:18 2026] ACPI: RSDP 0x0000000099C4D014 000024 (v02 ACRSYS)
+[Thu Jan  8 16:54:18 2026] ACPI: XSDT 0x0000000099C25188 000114 (v01 ACRSYS ACRPRDCT 00000002      01000013)
+[Thu Jan  8 16:54:18 2026] ACPI: FACP 0x0000000099C24000 00010C (v05 ACRSYS ACRPRDCT 00000002 1025 00040000)
+[Thu Jan  8 16:54:18 2026] ACPI: DSDT 0x0000000099BDB000 04529B (v02 ACRSYS ACRPRDCT 00000002 1025 00040000)
+[Thu Jan  8 16:54:18 2026] ACPI: FACS 0x0000000099B64000 000040
+[Thu Jan  8 16:54:18 2026] ACPI: UEFI 0x0000000099BCD000 000236 (v01 ACRSYS ACRPRDCT 00000001 1025 00040000)
+[Thu Jan  8 16:54:18 2026] ACPI: SSDT 0x0000000099C47000 00497E (v02 ACRSYS ACRPRDCT 00001000 1025 00040000)
+[Thu Jan  8 16:54:18 2026] ACPI: SSDT 0x0000000099C46000 000100 (v02 ACRSYS ACRPRDCT 00003000 1025 00040000)
+[Thu Jan  8 16:54:18 2026] ACPI: SSDT 0x0000000099C45000 000834 (v02 ACRSYS ACRPRDCT 00003000 1025 00040000)
+[Thu Jan  8 16:54:18 2026] ACPI: SSDT 0x0000000099C42000 0020AD (v02 ACRSYS ACRPRDCT 00003000 1025 00040000)
+[Thu Jan  8 16:54:18 2026] ACPI: SSDT 0x0000000099C3E000 0031DA (v02 ACRSYS ACRPRDCT 00003000 1025 00040000)
+[Thu Jan  8 16:54:18 2026] ACPI: SSDT 0x0000000099C3B000 002C48 (v02 ACRSYS ACRPRDCT 00001000 1025 00040000)
+[Thu Jan  8 16:54:18 2026] ACPI: SSDT 0x0000000099C3A000 00045A (v02 ACRSYS ACRPRDCT 00001000 1025 00040000)
+[Thu Jan  8 16:54:18 2026] ACPI: SSDT 0x0000000099C39000 000046 (v02 ACRSYS ACRPRDCT 00003000 1025 00040000)
+[Thu Jan  8 16:54:18 2026] ACPI: TPM2 0x0000000099C38000 000034 (v03 ACRSYS ACRPRDCT 00000002 1025 00040000)
+[Thu Jan  8 16:54:18 2026] ACPI: LPIT 0x0000000099C37000 000094 (v01 ACRSYS ACRPRDCT 00000002 1025 00040000)
+[Thu Jan  8 16:54:18 2026] ACPI: WSMT 0x0000000099C36000 000028 (v01 ACRSYS ACRPRDCT 00000002 1025 00040000)
+[Thu Jan  8 16:54:18 2026] ACPI: SSDT 0x0000000099C35000 000B70 (v02 ACRSYS ACRPRDCT 00001000 1025 00040000)
+[Thu Jan  8 16:54:18 2026] ACPI: SSDT 0x0000000099C32000 00256F (v02 ACRSYS ACRPRDCT 00000000 1025 00040000)
+[Thu Jan  8 16:54:18 2026] ACPI: DBGP 0x0000000099C31000 000034 (v01 ACRSYS ACRPRDCT 00000002 1025 00040000)
+[Thu Jan  8 16:54:18 2026] ACPI: DBG2 0x0000000099C30000 00005C (v00 ACRSYS ACRPRDCT 00000002 1025 00040000)
+[Thu Jan  8 16:54:18 2026] ACPI: SSDT 0x0000000099C2F000 000B9F (v02 ACRSYS ACRPRDCT 00001000 1025 00040000)
+[Thu Jan  8 16:54:18 2026] ACPI: MSDM 0x0000000099C2E000 000055 (v03 ACRSYS ACRPRDCT 00000001 1025 00040000)
+[Thu Jan  8 16:54:18 2026] ACPI: SSDT 0x0000000099C26000 0075A5 (v01 ACRSYS ACRPRDCT 00001000 1025 00040000)
+[Thu Jan  8 16:54:18 2026] ACPI: NHLT 0x0000000099C4C000 0002DF (v00 ACRSYS ACRPRDCT 00000002 1025 00040000)
+[Thu Jan  8 16:54:18 2026] ACPI: HPET 0x0000000099C23000 000038 (v01 ACRSYS ACRPRDCT 00000002 1025 00040000)
+[Thu Jan  8 16:54:18 2026] ACPI: APIC 0x0000000099C22000 000164 (v03 ACRSYS ACRPRDCT 00000002 1025 00040000)
+[Thu Jan  8 16:54:18 2026] ACPI: MCFG 0x0000000099C21000 00003C (v01 ACRSYS ACRPRDCT 00000002 1025 00040000)
+[Thu Jan  8 16:54:18 2026] ACPI: SSDT 0x0000000099BD7000 002041 (v01 ACRSYS ACRPRDCT 00001000 1025 00040000)
+[Thu Jan  8 16:54:18 2026] ACPI: SSDT 0x0000000099BD6000 000161 (v02 ACRSYS ACRPRDCT 00001000 1025 00040000)
+[Thu Jan  8 16:54:18 2026] ACPI: DMAR 0x0000000099BDA000 0000A8 (v01 ACRSYS ACRPRDCT 00000002 1025 00040000)
+[Thu Jan  8 16:54:18 2026] ACPI: SSDT 0x0000000099BD5000 000164 (v01 ACRSYS ACRPRDCT 00001000 1025 00040000)
+[Thu Jan  8 16:54:18 2026] ACPI: FPDT 0x0000000099BD4000 000044 (v01 ACRSYS ACRPRDCT 00000002 1025 00040000)
+[Thu Jan  8 16:54:18 2026] ACPI: BGRT 0x0000000099BD3000 000038 (v01 ACRSYS ACRPRDCT 00000001 1025 00040000)
+[Thu Jan  8 16:54:18 2026] ACPI: Reserving FACP table memory at [mem 0x99c24000-0x99c2410b]
+[Thu Jan  8 16:54:18 2026] ACPI: Reserving DSDT table memory at [mem 0x99bdb000-0x99c2029a]
+[Thu Jan  8 16:54:18 2026] ACPI: Reserving FACS table memory at [mem 0x99b64000-0x99b6403f]
+[Thu Jan  8 16:54:18 2026] ACPI: Reserving UEFI table memory at [mem 0x99bcd000-0x99bcd235]
+[Thu Jan  8 16:54:18 2026] ACPI: Reserving SSDT table memory at [mem 0x99c47000-0x99c4b97d]
+[Thu Jan  8 16:54:18 2026] ACPI: Reserving SSDT table memory at [mem 0x99c46000-0x99c460ff]
+[Thu Jan  8 16:54:18 2026] ACPI: Reserving SSDT table memory at [mem 0x99c45000-0x99c45833]
+[Thu Jan  8 16:54:18 2026] ACPI: Reserving SSDT table memory at [mem 0x99c42000-0x99c440ac]
+[Thu Jan  8 16:54:18 2026] ACPI: Reserving SSDT table memory at [mem 0x99c3e000-0x99c411d9]
+[Thu Jan  8 16:54:18 2026] ACPI: Reserving SSDT table memory at [mem 0x99c3b000-0x99c3dc47]
+[Thu Jan  8 16:54:18 2026] ACPI: Reserving SSDT table memory at [mem 0x99c3a000-0x99c3a459]
+[Thu Jan  8 16:54:18 2026] ACPI: Reserving SSDT table memory at [mem 0x99c39000-0x99c39045]
+[Thu Jan  8 16:54:18 2026] ACPI: Reserving TPM2 table memory at [mem 0x99c38000-0x99c38033]
+[Thu Jan  8 16:54:18 2026] ACPI: Reserving LPIT table memory at [mem 0x99c37000-0x99c37093]
+[Thu Jan  8 16:54:18 2026] ACPI: Reserving WSMT table memory at [mem 0x99c36000-0x99c36027]
+[Thu Jan  8 16:54:18 2026] ACPI: Reserving SSDT table memory at [mem 0x99c35000-0x99c35b6f]
+[Thu Jan  8 16:54:18 2026] ACPI: Reserving SSDT table memory at [mem 0x99c32000-0x99c3456e]
+[Thu Jan  8 16:54:18 2026] ACPI: Reserving DBGP table memory at [mem 0x99c31000-0x99c31033]
+[Thu Jan  8 16:54:18 2026] ACPI: Reserving DBG2 table memory at [mem 0x99c30000-0x99c3005b]
+[Thu Jan  8 16:54:18 2026] ACPI: Reserving SSDT table memory at [mem 0x99c2f000-0x99c2fb9e]
+[Thu Jan  8 16:54:18 2026] ACPI: Reserving MSDM table memory at [mem 0x99c2e000-0x99c2e054]
+[Thu Jan  8 16:54:18 2026] ACPI: Reserving SSDT table memory at [mem 0x99c26000-0x99c2d5a4]
+[Thu Jan  8 16:54:18 2026] ACPI: Reserving NHLT table memory at [mem 0x99c4c000-0x99c4c2de]
+[Thu Jan  8 16:54:18 2026] ACPI: Reserving HPET table memory at [mem 0x99c23000-0x99c23037]
+[Thu Jan  8 16:54:18 2026] ACPI: Reserving APIC table memory at [mem 0x99c22000-0x99c22163]
+[Thu Jan  8 16:54:18 2026] ACPI: Reserving MCFG table memory at [mem 0x99c21000-0x99c2103b]
+[Thu Jan  8 16:54:18 2026] ACPI: Reserving SSDT table memory at [mem 0x99bd7000-0x99bd9040]
+[Thu Jan  8 16:54:18 2026] ACPI: Reserving SSDT table memory at [mem 0x99bd6000-0x99bd6160]
+[Thu Jan  8 16:54:18 2026] ACPI: Reserving DMAR table memory at [mem 0x99bda000-0x99bda0a7]
+[Thu Jan  8 16:54:18 2026] ACPI: Reserving SSDT table memory at [mem 0x99bd5000-0x99bd5163]
+[Thu Jan  8 16:54:18 2026] ACPI: Reserving FPDT table memory at [mem 0x99bd4000-0x99bd4043]
+[Thu Jan  8 16:54:18 2026] ACPI: Reserving BGRT table memory at [mem 0x99bd3000-0x99bd3037]
+[Thu Jan  8 16:54:18 2026] ACPI: PM-Timer IO Port: 0x1808
+[Thu Jan  8 16:54:18 2026] ACPI: LAPIC_NMI (acpi_id[0x01] high edge lint[0x1])
+[Thu Jan  8 16:54:18 2026] ACPI: LAPIC_NMI (acpi_id[0x02] high edge lint[0x1])
+[Thu Jan  8 16:54:18 2026] ACPI: LAPIC_NMI (acpi_id[0x03] high edge lint[0x1])
+[Thu Jan  8 16:54:18 2026] ACPI: LAPIC_NMI (acpi_id[0x04] high edge lint[0x1])
+[Thu Jan  8 16:54:18 2026] ACPI: LAPIC_NMI (acpi_id[0x05] high edge lint[0x1])
+[Thu Jan  8 16:54:18 2026] ACPI: LAPIC_NMI (acpi_id[0x06] high edge lint[0x1])
+[Thu Jan  8 16:54:18 2026] ACPI: LAPIC_NMI (acpi_id[0x07] high edge lint[0x1])
+[Thu Jan  8 16:54:18 2026] ACPI: LAPIC_NMI (acpi_id[0x08] high edge lint[0x1])
+[Thu Jan  8 16:54:18 2026] ACPI: LAPIC_NMI (acpi_id[0x09] high edge lint[0x1])
+[Thu Jan  8 16:54:18 2026] ACPI: LAPIC_NMI (acpi_id[0x0a] high edge lint[0x1])
+[Thu Jan  8 16:54:18 2026] ACPI: LAPIC_NMI (acpi_id[0x0b] high edge lint[0x1])
+[Thu Jan  8 16:54:18 2026] ACPI: LAPIC_NMI (acpi_id[0x0c] high edge lint[0x1])
+[Thu Jan  8 16:54:18 2026] ACPI: LAPIC_NMI (acpi_id[0x0d] high edge lint[0x1])
+[Thu Jan  8 16:54:18 2026] ACPI: LAPIC_NMI (acpi_id[0x0e] high edge lint[0x1])
+[Thu Jan  8 16:54:18 2026] ACPI: LAPIC_NMI (acpi_id[0x0f] high edge lint[0x1])
+[Thu Jan  8 16:54:18 2026] ACPI: LAPIC_NMI (acpi_id[0x10] high edge lint[0x1])
+[Thu Jan  8 16:54:18 2026] ACPI: LAPIC_NMI (acpi_id[0x11] high edge lint[0x1])
+[Thu Jan  8 16:54:18 2026] ACPI: LAPIC_NMI (acpi_id[0x12] high edge lint[0x1])
+[Thu Jan  8 16:54:18 2026] ACPI: LAPIC_NMI (acpi_id[0x13] high edge lint[0x1])
+[Thu Jan  8 16:54:18 2026] ACPI: LAPIC_NMI (acpi_id[0x14] high edge lint[0x1])
+[Thu Jan  8 16:54:18 2026] ACPI: INT_SRC_OVR (bus 0 bus_irq 0 global_irq 2 dfl dfl)
+[Thu Jan  8 16:54:18 2026] ACPI: INT_SRC_OVR (bus 0 bus_irq 9 global_irq 9 high level)
+[Thu Jan  8 16:54:18 2026] ACPI: Using ACPI (MADT) for SMP configuration information
+[Thu Jan  8 16:54:18 2026] ACPI: HPET id: 0x8086a201 base: 0xfed00000
+[Thu Jan  8 16:54:18 2026] PM: hibernation: Registered nosave memory: [mem 0x00000000-0x00000fff]
+[Thu Jan  8 16:54:18 2026] PM: hibernation: Registered nosave memory: [mem 0x0009f000-0x000fffff]
+[Thu Jan  8 16:54:18 2026] PM: hibernation: Registered nosave memory: [mem 0x84441000-0x84449fff]
+[Thu Jan  8 16:54:18 2026] PM: hibernation: Registered nosave memory: [mem 0x84642000-0x84735fff]
+[Thu Jan  8 16:54:18 2026] PM: hibernation: Registered nosave memory: [mem 0x88d58000-0x89657fff]
+[Thu Jan  8 16:54:18 2026] PM: hibernation: Registered nosave memory: [mem 0x9786e000-0x99c4dfff]
+[Thu Jan  8 16:54:18 2026] PM: hibernation: Registered nosave memory: [mem 0x99c4f000-0xffffffff]
+[Thu Jan  8 16:54:18 2026] ACPI: Core revision 20250807
+[Thu Jan  8 16:54:19 2026] ACPI: PM: Registering ACPI NVS region [mem 0x98d6e000-0x99bcdfff] (15073280 bytes)
+[Thu Jan  8 16:54:19 2026] PM: RTC time: 22:53:29, date: 2026-01-08
+[Thu Jan  8 16:54:19 2026] ACPI FADT declares the system doesn't support PCIe ASPM, so disable it
+[Thu Jan  8 16:54:19 2026] acpiphp: ACPI Hot Plug PCI Controller Driver version: 0.5
+[Thu Jan  8 16:54:19 2026] ACPI: Added _OSI(Module Device)
+[Thu Jan  8 16:54:19 2026] ACPI: Added _OSI(Processor Device)
+[Thu Jan  8 16:54:19 2026] ACPI: Added _OSI(Processor Aggregator Device)
+[Thu Jan  8 16:54:19 2026] ACPI: 16 ACPI AML tables successfully acquired and loaded
+[Thu Jan  8 16:54:19 2026] ACPI: Dynamic OEM Table Load:
+[Thu Jan  8 16:54:19 2026] ACPI: SSDT 0xFFFF8B89045A0000 000400 (v02 PmRef  Cpu0Cst  00003001 INTL 20160422)
+[Thu Jan  8 16:54:19 2026] ACPI: Dynamic OEM Table Load:
+[Thu Jan  8 16:54:19 2026] ACPI: SSDT 0xFFFF8B89045AE800 000560 (v02 PmRef  Cpu0Ist  00003000 INTL 20160422)
+[Thu Jan  8 16:54:19 2026] ACPI: Dynamic OEM Table Load:
+[Thu Jan  8 16:54:19 2026] ACPI: SSDT 0xFFFF8B89034C5A00 0000FC (v02 PmRef  Cpu0Psd  00003000 INTL 20160422)
+[Thu Jan  8 16:54:19 2026] ACPI: Dynamic OEM Table Load:
+[Thu Jan  8 16:54:19 2026] ACPI: SSDT 0xFFFF8B8903482E00 00016C (v02 PmRef  Cpu0Hwp  00003000 INTL 20160422)
+[Thu Jan  8 16:54:19 2026] ACPI: Dynamic OEM Table Load:
+[Thu Jan  8 16:54:19 2026] ACPI: SSDT 0xFFFF8B8904285000 000BEA (v02 PmRef  HwpLvt   00003000 INTL 20160422)
+[Thu Jan  8 16:54:19 2026] ACPI: Dynamic OEM Table Load:
+[Thu Jan  8 16:54:19 2026] ACPI: SSDT 0xFFFF8B89045A9000 000778 (v02 PmRef  ApIst    00003000 INTL 20160422)
+[Thu Jan  8 16:54:19 2026] ACPI: Dynamic OEM Table Load:
+[Thu Jan  8 16:54:19 2026] ACPI: SSDT 0xFFFF8B89045A4800 0003D7 (v02 PmRef  ApHwp    00003000 INTL 20160422)
+[Thu Jan  8 16:54:19 2026] ACPI: Dynamic OEM Table Load:
+[Thu Jan  8 16:54:19 2026] ACPI: SSDT 0xFFFF8B8904280000 000D22 (v02 PmRef  ApPsd    00003000 INTL 20160422)
+[Thu Jan  8 16:54:19 2026] ACPI: Dynamic OEM Table Load:
+[Thu Jan  8 16:54:19 2026] ACPI: SSDT 0xFFFF8B89045A2400 0003CA (v02 PmRef  ApCst    00003000 INTL 20160422)
+[Thu Jan  8 16:54:19 2026] ACPI: EC: EC started
+[Thu Jan  8 16:54:19 2026] ACPI: EC: interrupt blocked
+[Thu Jan  8 16:54:19 2026] ACPI: EC: EC_CMD/EC_SC=0x66, EC_DATA=0x62
+[Thu Jan  8 16:54:19 2026] ACPI: \_SB_.PCI0.LPCB.EC0_: Boot DSDT EC used to handle transactions
+[Thu Jan  8 16:54:19 2026] ACPI: Interpreter enabled
+[Thu Jan  8 16:54:19 2026] ACPI: PM: (supports S0 S3 S4 S5)
+[Thu Jan  8 16:54:19 2026] ACPI: Using IOAPIC for interrupt routing
+[Thu Jan  8 16:54:19 2026] PCI: Using host bridge windows from ACPI; if necessary, use "pci=nocrs" and report a bug
+[Thu Jan  8 16:54:19 2026] ACPI: Enabled 7 GPEs in block 00 to 7F
+[Thu Jan  8 16:54:19 2026] ACPI: \_SB_.PCI0.PEG0.PG00: New power resource
+[Thu Jan  8 16:54:19 2026] ACPI: \_SB_.PCI0.PEG1.PG01: New power resource
+[Thu Jan  8 16:54:19 2026] ACPI: \_SB_.PCI0.PEG2.PG02: New power resource
+[Thu Jan  8 16:54:19 2026] ACPI: \_SB_.PCI0.XHC_.RHUB.HS14.BTPR: New power resource
+[Thu Jan  8 16:54:19 2026] ACPI: \_SB_.PCI0.XDCI.USBC: New power resource
+[Thu Jan  8 16:54:19 2026] ACPI: \_SB_.PCI0.SAT0.VOL0.V0PR: New power resource
+[Thu Jan  8 16:54:19 2026] ACPI: \_SB_.PCI0.SAT0.VOL1.V1PR: New power resource
+[Thu Jan  8 16:54:19 2026] ACPI: \_SB_.PCI0.SAT0.VOL2.V2PR: New power resource
+[Thu Jan  8 16:54:19 2026] ACPI: \_SB_.PCI0.CNVW.WRST: New power resource
+[Thu Jan  8 16:54:19 2026] acpi ABCD0000:00: ACPI dock station (docks/bays count: 1)
+[Thu Jan  8 16:54:19 2026] ACPI: \PIN_: New power resource
+[Thu Jan  8 16:54:19 2026] ACPI: PCI Root Bridge [PCI0] (domain 0000 [bus 00-fe])
+[Thu Jan  8 16:54:19 2026] acpi PNP0A08:00: _OSC: OS supports [ExtendedConfig ASPM ClockPM Segments MSI HPX-Type3]
+[Thu Jan  8 16:54:19 2026] acpi PNP0A08:00: _OSC: OS now controls [PCIeHotplug PME PCIeCapability LTR]
+[Thu Jan  8 16:54:19 2026] acpi PNP0A08:00: FADT indicates ASPM is unsupported, using BIOS configuration
+[Thu Jan  8 16:54:19 2026] ACPI: EC: interrupt unblocked
+[Thu Jan  8 16:54:19 2026] ACPI: EC: event unblocked
+[Thu Jan  8 16:54:19 2026] ACPI: EC: EC_CMD/EC_SC=0x66, EC_DATA=0x62
+[Thu Jan  8 16:54:19 2026] ACPI: EC: GPE=0x14
+[Thu Jan  8 16:54:19 2026] ACPI: \_SB_.PCI0.LPCB.EC0_: Boot DSDT EC initialization complete
+[Thu Jan  8 16:54:19 2026] ACPI: \_SB_.PCI0.LPCB.EC0_: EC: Used to handle transactions and events
+[Thu Jan  8 16:54:19 2026] ACPI: bus type USB registered
+[Thu Jan  8 16:54:19 2026] PCI: Using ACPI for IRQ routing
+[Thu Jan  8 16:54:19 2026] pnp: PnP ACPI init
+[Thu Jan  8 16:54:19 2026] pnp: PnP ACPI: found 7 devices
+[Thu Jan  8 16:54:19 2026] clocksource: acpi_pm: mask: 0xffffff max_cycles: 0xffffff, max_idle_ns: 2085701024 ns
+[Thu Jan  8 16:54:19 2026] ACPI: bus type drm_connector registered
+[Thu Jan  8 16:54:19 2026] simple-framebuffer simple-framebuffer.0: [drm] Registered 1 planes with drm panic
+[Thu Jan  8 16:54:19 2026] [drm] Initialized simpledrm 1.0.0 for simple-framebuffer.0 on minor 0
+[Thu Jan  8 16:54:19 2026] simple-framebuffer simple-framebuffer.0: [drm] fb0: simpledrmdrmfb frame buffer device
+[Thu Jan  8 16:54:19 2026] PM:   Magic number: 10:244:906
+[Thu Jan  8 16:54:19 2026] RAS: Correctable Errors collector initialized.
+[Thu Jan  8 16:54:19 2026] PM: genpd: Disabling unused power domains
+[Thu Jan  8 16:54:19 2026] nvme 0000:06:00.0: platform quirk: setting simple suspend
+[Thu Jan  8 16:54:21 2026] systemd[1]: Load Kernel Module drm was skipped because of an unmet condition check (ConditionKernelModuleLoaded=!drm).
+[Thu Jan  8 16:54:21 2026] systemd[1]: Clear Stale Hibernate Storage Info was skipped because of an unmet condition check (ConditionPathExists=/sys/firmware/efi/efivars/HibernateLocation-8cf2644b-4b0b-428f-9387-6d876050dc67).
+[Thu Jan  8 16:54:21 2026] ACPI: button: Lid Switch [LID0]
+[Thu Jan  8 16:54:21 2026] ACPI: button: Sleep Button [SLPB]
+[Thu Jan  8 16:54:21 2026] ACPI: button: Power Button [PWRB]
+[Thu Jan  8 16:54:21 2026] ACPI: button: Power Button [PWRF]
+[Thu Jan  8 16:54:21 2026] ACPI: AC: AC Adapter [ACAD] (on-line)
+[Thu Jan  8 16:54:21 2026] ACPI: battery: Slot [BAT1] (battery present)
+[Thu Jan  8 16:54:21 2026] input: HDA NVidia HDMI/DP,pcm=3 as /devices/pci0000:00/0000:00:01.0/0000:01:00.1/sound/card0/input11
+[Thu Jan  8 16:54:21 2026] input: HDA NVidia HDMI/DP,pcm=7 as /devices/pci0000:00/0000:00:01.0/0000:01:00.1/sound/card0/input12
+[Thu Jan  8 16:54:21 2026] input: HDA NVidia HDMI/DP,pcm=8 as /devices/pci0000:00/0000:00:01.0/0000:01:00.1/sound/card0/input13
+[Thu Jan  8 16:54:21 2026] input: HDA NVidia HDMI/DP,pcm=9 as /devices/pci0000:00/0000:00:01.0/0000:01:00.1/sound/card0/input14
+[Thu Jan  8 16:54:22 2026] i915 0000:00:02.0: [drm] Found cometlake (device ID 9bc4) integrated display version 9.00 stepping N/A
+[Thu Jan  8 16:54:22 2026] i915 0000:00:02.0: vgaarb: deactivate vga console
+[Thu Jan  8 16:54:22 2026] i915 0000:00:02.0: vgaarb: VGA decodes changed: olddecodes=io+mem,decodes=none:owns=io+mem
+[Thu Jan  8 16:54:22 2026] i915 0000:00:02.0: [drm] Finished loading DMC firmware i915/kbl_dmc_ver1_04.bin (v1.4)
+[Thu Jan  8 16:54:22 2026] i915 0000:00:02.0: [drm] Registered 3 planes with drm panic
+[Thu Jan  8 16:54:22 2026] [drm] Initialized i915 1.6.0 for 0000:00:02.0 on minor 1
+[Thu Jan  8 16:54:22 2026] ACPI: video: Video Device [GFX0] (multi-head: yes  rom: no  post: no)
+[Thu Jan  8 16:54:22 2026] fbcon: i915drmfb (fb0) is primary device
+[Thu Jan  8 16:54:22 2026] ACPI Warning: \_SB.PCI0.PEG0.PEGP._DSM: Argument #4 type mismatch - Found [Buffer], ACPI requires [Package] (20250807/nsarguments-61)
+[Thu Jan  8 16:54:22 2026] nouveau: detected PR support, will not use DSM
+[Thu Jan  8 16:54:22 2026] nouveau 0000:01:00.0: enabling device (0006 -> 0007)
+[Thu Jan  8 16:54:22 2026] nouveau 0000:01:00.0: NVIDIA GA107 (b77000a1)
+[Thu Jan  8 16:54:22 2026] acer_wmi: Acer Laptop ACPI-WMI Extras
+[Thu Jan  8 16:54:22 2026] snd_hda_intel 0000:00:1f.3: bound 0000:00:02.0 (ops intel_audio_component_bind_ops [i915])
+[Thu Jan  8 16:54:22 2026] mei_hdcp 0000:00:16.0-b638ab7e-94e2-4ea2-a552-d1c54b627f04: bound 0000:00:02.0 (ops i915_hdcp_ops [i915])
+[Thu Jan  8 16:54:22 2026] i915 0000:00:02.0: [drm] fb0: i915drmfb frame buffer device
+[Thu Jan  8 16:54:22 2026] nouveau 0000:01:00.0: gsp: RM version: 570.144
+[Thu Jan  8 16:54:22 2026] nouveau 0000:01:00.0: bios: version 94.07.3a.00.ce
+[Thu Jan  8 16:54:24 2026] nouveau 0000:01:00.0: drm: VRAM: 4096 MiB
+[Thu Jan  8 16:54:24 2026] nouveau 0000:01:00.0: drm: GART: 536870912 MiB
+[Thu Jan  8 16:54:24 2026] nouveau 0000:01:00.0: drm: MM: using COPY for buffer copies
+[Thu Jan  8 16:54:24 2026] snd_hda_intel 0000:01:00.1: bound 0000:01:00.0 (ops nv50_audio_component_bind_ops [nouveau])
+[Thu Jan  8 16:54:24 2026] nouveau 0000:01:00.0: [drm] Registered 4 planes with drm panic
+[Thu Jan  8 16:54:24 2026] [drm] Initialized nouveau 1.4.0 for 0000:01:00.0 on minor 0
+[Thu Jan  8 16:54:24 2026] nouveau 0000:01:00.0: [drm] fb1: nouveaudrmfb frame buffer device
+[Thu Jan  8 16:54:24 2026] nouveau 0000:01:00.0: drm: Disabling PCI power management to avoid bug
+[Thu Jan  8 16:59:22 2026] PM: suspend entry (deep)
+[Thu Jan  8 16:59:22 2026] Freezing user space processes
+[Thu Jan  8 16:59:22 2026] Freezing user space processes completed (elapsed 0.001 seconds)
+[Thu Jan  8 16:59:22 2026] Freezing remaining freezable tasks
+[Thu Jan  8 16:59:22 2026] Freezing remaining freezable tasks completed (elapsed 0.001 seconds)
+[Thu Jan  8 16:59:22 2026] printk: Suspending console(s) (use no_console_suspend to debug)
+[Thu Jan  8 16:59:23 2026] ACPI: EC: interrupt blocked
+[Thu Jan  8 16:59:23 2026] ACPI: PM: Preparing to enter system sleep state S3
+[Thu Jan  8 16:59:23 2026] ACPI: EC: event blocked
+[Thu Jan  8 16:59:23 2026] ACPI: EC: EC stopped
+[Thu Jan  8 16:59:23 2026] ACPI: PM: Saving platform NVS memory
+[Thu Jan  8 16:59:23 2026] ACPI: PM: Low-level resume complete
+[Thu Jan  8 16:59:23 2026] ACPI: EC: EC started
+[Thu Jan  8 16:59:23 2026] ACPI: PM: Restoring platform NVS memory
+[Thu Jan  8 16:59:23 2026] ACPI: PM: Waking up from system sleep state S3
+[Thu Jan  8 16:59:23 2026] ACPI: EC: interrupt unblocked
+[Thu Jan  8 16:59:24 2026] ACPI: EC: event unblocked
+[Thu Jan  8 16:59:24 2026] iwlwifi 0000:00:14.3: Rfkill was toggled during suspend
+[Thu Jan  8 16:59:25 2026] mei_hdcp 0000:00:16.0-b638ab7e-94e2-4ea2-a552-d1c54b627f04: bound 0000:00:02.0 (ops i915_hdcp_ops [i915])
+[Thu Jan  8 16:59:25 2026] PM: suspend exit
+[Thu Jan  8 16:59:41 2026] PM: Image not found (code -16)
+[Thu Jan  8 16:59:41 2026] PM: hibernation: hibernation entry
+[Thu Jan  8 16:59:41 2026] Freezing user space processes
+[Thu Jan  8 16:59:41 2026] Freezing user space processes completed (elapsed 0.001 seconds)
+[Thu Jan  8 16:59:41 2026] PM: hibernation: Marking nosave pages: [mem 0x00000000-0x00000fff]
+[Thu Jan  8 16:59:41 2026] PM: hibernation: Marking nosave pages: [mem 0x0009f000-0x000fffff]
+[Thu Jan  8 16:59:41 2026] PM: hibernation: Marking nosave pages: [mem 0x84441000-0x84449fff]
+[Thu Jan  8 16:59:41 2026] PM: hibernation: Marking nosave pages: [mem 0x84642000-0x84735fff]
+[Thu Jan  8 16:59:41 2026] PM: hibernation: Marking nosave pages: [mem 0x88d58000-0x89657fff]
+[Thu Jan  8 16:59:41 2026] PM: hibernation: Marking nosave pages: [mem 0x9786e000-0x99c4dfff]
+[Thu Jan  8 16:59:41 2026] PM: hibernation: Marking nosave pages: [mem 0x99c4f000-0xffffffff]
+[Thu Jan  8 16:59:41 2026] PM: hibernation: Basic memory bitmaps created
+[Thu Jan  8 16:59:41 2026] PM: hibernation: Preallocating image memory
+[Thu Jan  8 16:59:42 2026] PM: hibernation: Allocated 1613085 pages for snapshot
+[Thu Jan  8 16:59:42 2026] PM: hibernation: Allocated 6452340 kbytes in 1.58 seconds (4083.75 MB/s)
+[Thu Jan  8 16:59:42 2026] Freezing remaining freezable tasks
+[Thu Jan  8 16:59:42 2026] Freezing remaining freezable tasks completed (elapsed 0.001 seconds)
+[Thu Jan  8 16:59:43 2026] printk: Suspending console(s) (use no_console_suspend to debug)
+[Thu Jan  8 16:59:44 2026] ACPI: EC: interrupt blocked
+[Thu Jan  8 16:59:44 2026] ACPI: PM: Preparing to enter system sleep state S4
+[Thu Jan  8 16:59:44 2026] ACPI: EC: event blocked
+[Thu Jan  8 16:59:44 2026] ACPI: EC: EC stopped
+[Thu Jan  8 16:59:44 2026] ACPI: PM: Saving platform NVS memory
+[Thu Jan  8 16:59:44 2026] PM: hibernation: Creating image:
+[Thu Jan  8 16:59:44 2026] PM: hibernation: Need to copy 1424387 pages
+[Thu Jan  8 16:59:44 2026] PM: hibernation: Normal pages needed: 1424387 + 1024, available pages: 2725507
+[Thu Jan  8 16:59:44 2026] ACPI: PM: Restoring platform NVS memory
+[Thu Jan  8 16:59:44 2026] ACPI: EC: EC started
+[Thu Jan  8 16:59:44 2026] ACPI: PM: Waking up from system sleep state S4
+[Thu Jan  8 16:59:44 2026] ACPI: EC: interrupt unblocked
+[Thu Jan  8 16:59:44 2026] ACPI: EC: event unblocked
+[Thu Jan  8 16:59:51 2026] xhci_hcd 0000:00:14.0: Timeout while waiting for setup device command
+[Thu Jan  8 16:59:56 2026] xhci_hcd 0000:00:14.0: Timeout while waiting for setup device command
+[Thu Jan  8 16:59:57 2026] usb 2-3: device not accepting address 2, error -62
+[Thu Jan  8 16:59:57 2026] PM: hibernation: Basic memory bitmaps freed
+[Thu Jan  8 16:59:57 2026] mei_hdcp 0000:00:16.0-b638ab7e-94e2-4ea2-a552-d1c54b627f04: bound 0000:00:02.0 (ops i915_hdcp_ops [i915])
+[Thu Jan  8 16:59:57 2026] PM: hibernation: hibernation exit
+[Thu Jan  8 17:00:16 2026] drm card1-eDP-1: Skipping unprepare of already unprepared panel

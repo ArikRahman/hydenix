@@ -1,0 +1,62 @@
+=== swapon --show ===
+NAME           TYPE      SIZE   USED PRIO
+/dev/nvme0n1p3 partition  17G 355.9M   -2
+
+=== lsblk -f ===
+NAME        FSTYPE      FSVER LABEL UUID                                 FSAVAIL FSUSE% MOUNTPOINTS
+sda                                                                                     
+└─sda1      crypto_LUKS 2           72a8054a-d009-430c-9b0f-1cd570933865                
+nvme0n1                                                                                 
+├─nvme0n1p1 vfat        FAT32       268F-03E0                             944.8M     8% /boot
+├─nvme0n1p2 ext4        1.0   root  26556352-790a-4be3-a1e4-694318728b1b    360G    15% /nix/store
+│                                                                                       /
+└─nvme0n1p3 swap        1     swap  82250e78-4142-4376-bef7-200b513b7417                [SWAP]
+
+=== cat /proc/cmdline ===
+initrd=\EFI\nixos\asxdr44yz2kdliciwadk90aycazf1fhh-initrd-linux-zen-6.18.2-initrd.efi init=/nix/store/rbdlg9wm74jb6lazn0blkwarsak0gw3w-nixos-system-hydenix-26.05.20251229.95e96e8/init snd_hda_intel.power_save=0 snd_hda_intel.power_save_controller=N loglevel=4 lsm=landlock,yama,bpf
+
+=== loginctl show-system ===
+
+=== systemd sleep config ===
+# /etc/systemd/sleep.conf -> /nix/store/d13dz69gbs4pvwy2by94r94zmx1rl276-etc-systemd-sleep.conf
+[Sleep]
+
+
+
+# Main configuration file systemd/sleep.conf.d/*.conf not found
+
+=== journal last hibernate ===
+Jan 08 15:43:47 hydenix systemd[1]: Starting User Login Management...
+Jan 08 15:43:47 hydenix systemd-logind[911]: New seat seat0.
+Jan 08 15:43:47 hydenix systemd-logind[911]: Watching system buttons on /dev/input/event10 (Power Button)
+Jan 08 15:43:47 hydenix systemd-logind[911]: Watching system buttons on /dev/input/event7 (Lid Switch)
+Jan 08 15:43:47 hydenix systemd-logind[911]: Watching system buttons on /dev/input/event9 (Power Button)
+Jan 08 15:43:47 hydenix systemd-logind[911]: Watching system buttons on /dev/input/event8 (Sleep Button)
+Jan 08 15:43:47 hydenix systemd-logind[911]: Watching system buttons on /dev/input/event2 (Razer Razer Viper Ultimate Dongle Keyboard)
+Jan 08 15:43:47 hydenix systemd-logind[911]: Watching system buttons on /dev/input/event4 (Razer Razer Viper Ultimate Dongle)
+Jan 08 15:43:47 hydenix systemd-logind[911]: Watching system buttons on /dev/input/event5 (Dell Dell USB Keyboard)
+Jan 08 15:43:47 hydenix systemd-logind[911]: Watching system buttons on /dev/input/event0 (AT Translated Set 2 keyboard)
+Jan 08 15:43:47 hydenix systemd-logind[911]: Watching system buttons on /dev/input/event16 (Acer WMI hotkeys)
+Jan 08 15:43:47 hydenix systemd[1]: Started User Login Management.
+Jan 08 15:45:16 hydenix systemd-logind[911]: New session 'c1' of user 'sddm' with class 'greeter' and type 'wayland'.
+Jan 08 15:45:16 hydenix systemd-logind[911]: New session '1' of user 'sddm' with class 'manager-early' and type 'unspecified'.
+Jan 08 15:45:31 hydenix systemd-logind[911]: New session '2' of user 'hydenix' with class 'user' and type 'wayland'.
+Jan 08 15:45:31 hydenix systemd-logind[911]: New session '3' of user 'hydenix' with class 'manager' and type 'unspecified'.
+Jan 08 15:45:31 hydenix systemd-logind[911]: Session c1 logged out. Waiting for processes to exit.
+Jan 08 15:45:31 hydenix systemd-logind[911]: Removed session c1.
+Jan 08 15:45:41 hydenix systemd-logind[911]: Removed session 1.
+Jan 08 15:45:57 hydenix systemd-logind[911]: Lid closed.
+Jan 08 16:00:03 hydenix systemd-logind[911]: Lid opened.
+Jan 08 16:00:08 hydenix systemd-logind[911]: Lid closed.
+Jan 08 16:00:12 hydenix systemd-logind[911]: Lid opened.
+Jan 08 16:00:17 hydenix systemd-logind[911]: Lid closed.
+Jan 08 16:53:14 hydenix systemd-logind[911]: Lid opened.
+Jan 08 16:53:15 hydenix systemd-logind[911]: The system will reboot now!
+Jan 08 16:53:15 hydenix systemd-logind[911]: System is rebooting.
+Jan 08 16:53:15 hydenix systemd-logind[911]: Session 2 logged out. Waiting for processes to exit.
+Jan 08 16:53:16 hydenix systemd-logind[911]: Removed session 2.
+Jan 08 16:53:16 hydenix systemd-logind[911]: Removed session 3.
+Jan 08 16:53:16 hydenix systemd[1]: Stopping User Login Management...
+Jan 08 16:53:16 hydenix systemd[1]: systemd-logind.service: Deactivated successfully.
+Jan 08 16:53:16 hydenix systemd[1]: Stopped User Login Management.
+Jan 08 16:53:16 hydenix systemd[1]: systemd-logind.service: Consumed 5.876s CPU time, 6.1M memory peak, 621.5K read from disk.
