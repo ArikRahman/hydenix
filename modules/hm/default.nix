@@ -7,24 +7,24 @@
 }:
 
 let
-  username = config.home.username;
-  mountPath = "/run/media/${username}/arik_s disk";
-  fixAriksDiskPerms = pkgs.writeShellScript "fix-ariks-disk-perms" ''
-    set -euo pipefail
-
-    p="${mountPath}"
-    if [ ! -d "$p" ]; then
-      exit 0
-    fi
-    if ! ${pkgs.util-linux}/bin/mountpoint -q "$p"; then
-      exit 0
-    fi
-
-    # Ensure the mount root is traversable/readable/writable for this user.
-    ${pkgs.acl}/bin/setfacl -m "u:${username}:rwx" "$p"
-    ${pkgs.acl}/bin/setfacl -m "d:u:${username}:rwx" "$p"
-  '';
-
+  # NOTE: Disabled per request: arik's disk daemon/permission fix.
+  # username = config.home.username;
+  # mountPath = "/run/media/${username}/arik_s disk";
+  # fixAriksDiskPerms = pkgs.writeShellScript "fix-ariks-disk-perms" ''
+  #   set -euo pipefail
+  #
+  #   p="${mountPath}"
+  #   if [ ! -d "$p" ]; then
+  #     exit 0
+  #   fi
+  #   if ! ${pkgs.util-linux}/bin/mountpoint -q "$p"; then
+  #     exit 0
+  #   fi
+  #
+  #   # Ensure the mount root is traversable/readable/writable for this user.
+  #   ${pkgs.acl}/bin/setfacl -m "u:${username}:rwx" "$p"
+  #   ${pkgs.acl}/bin/setfacl -m "d:u:${username}:rwx" "$p"
+  # '';
 in
 
 let
@@ -207,28 +207,29 @@ in
     ./overrides/hyde-local-state.nix
   ];
 
-  systemd.user.paths.fix-ariks-disk-perms = {
-    Unit = {
-      Description = "Fix permissions for arik's disk when mounted";
-    };
-    Path = {
-      PathExists = mountPath;
-      Unit = "fix-ariks-disk-perms.service";
-    };
-    Install = {
-      WantedBy = [ "default.target" ];
-    };
-  };
-
-  systemd.user.services.fix-ariks-disk-perms = {
-    Unit = {
-      Description = "Ensure arik's disk is accessible to the user";
-    };
-    Service = {
-      Type = "oneshot";
-      ExecStart = fixAriksDiskPerms;
-    };
-  };
+  # NOTE: Disabled per request: arik's disk daemon/permission fix.
+  # systemd.user.paths.fix-ariks-disk-perms = {
+  #   Unit = {
+  #     Description = "Fix permissions for arik's disk when mounted";
+  #   };
+  #   Path = {
+  #     PathExists = mountPath;
+  #     Unit = "fix-ariks-disk-perms.service";
+  #   };
+  #   Install = {
+  #     WantedBy = [ "default.target" ];
+  #   };
+  # };
+  #
+  # systemd.user.services.fix-ariks-disk-perms = {
+  #   Unit = {
+  #     Description = "Ensure arik's disk is accessible to the user";
+  #   };
+  #   Service = {
+  #     Type = "oneshot";
+  #     ExecStart = fixAriksDiskPerms;
+  #   };
+  # };
 
   # home-manager options go here
   home.packages = with pkgs; [
