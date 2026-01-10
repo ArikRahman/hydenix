@@ -5,6 +5,10 @@
     # Your nixpkgs
     zen-browser.url = "github:youwen5/zen-browser-flake";
     zen-browser.inputs.nixpkgs.follows = "nixpkgs";
+    niri = {
+      url = "github:sodiboo/niri-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
@@ -25,7 +29,7 @@
   };
 
   outputs =
-    { ... }@inputs:
+    inputs:
     let
       system = "x86_64-linux";
 
@@ -65,7 +69,7 @@
               system.configurationRevision = inputs.self.rev or inputs.self.dirtyRev or null;
             }
           )
-
+          inputs.niri.nixosModules.niri
           ./configuration.nix
         ];
       };

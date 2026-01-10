@@ -16,17 +16,17 @@
     # Run `lshw -short` or `lspci` to identify your hardware
 
     # GPU Configuration (choose one):
-    # inputs.nixos-hardware.nixosModules.common-gpu-nvidia # NVIDIA
+    inputs.nixos-hardware.nixosModules.common-gpu-nvidia # NVIDIA
     # inputs.nixos-hardware.nixosModules.common-gpu-amd # AMD
 
     # CPU Configuration (choose one):
     # inputs.nixos-hardware.nixosModules.common-cpu-amd # AMD CPUs
-    # inputs.nixos-hardware.nixosModules.common-cpu-intel # Intel CPUs
+    inputs.nixos-hardware.nixosModules.common-cpu-intel # Intel CPUs
 
     # Additional Hardware Modules - Uncomment based on your system type:
     # inputs.nixos-hardware.nixosModules.common-hidpi # High-DPI displays
-    # inputs.nixos-hardware.nixosModules.common-pc-laptop # Laptops
-    # inputs.nixos-hardware.nixosModules.common-pc-ssd # SSD storage
+    inputs.nixos-hardware.nixosModules.common-pc-laptop # Laptops
+    inputs.nixos-hardware.nixosModules.common-pc-ssd # SSD storage
   ];
 
   # If enabling NVIDIA, you will be prompted to configure hardware.nvidia
@@ -65,6 +65,21 @@
   # - `forceDeepSleep` is hardware-dependent (s2idle vs deep).
   # hydenix.system.nvidiaSleepFix.restartDisplayManagerOnResume = true;
   # hydenix.system.nvidiaSleepFix.forceDeepSleep = true;
+
+  # Niri (Wayland compositor) — optional, installed alongside Hyprland/HyDE
+  #
+  # Why:
+  # - Adds the Niri session + required plumbing via `sodiboo/niri-flake` when enabled.
+  # - Does NOT change your default session; you can select Niri at login (SDDM) when you want.
+  #
+  # How:
+  # - This toggle is defined by `./modules/system/niri.nix` and wires into `programs.niri.*`.
+  #
+  # NOTE: keep this `false` until you’re ready to try it.
+  hydenix.system.niri.enable = false;
+  # Optional knobs:
+  # hydenix.system.niri.channel = "stable";   # or "unstable"
+  # hydenix.system.niri.enableCache = true;  # enable niri.cachix.org via upstream module
 
   # Home Manager Configuration - manages user-specific configurations (dotfiles, themes, etc.)
   home-manager = {

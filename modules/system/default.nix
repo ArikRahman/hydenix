@@ -6,6 +6,10 @@
     ./plasma6.nix
     ./syncthing.nix
 
+    # Niri (Wayland compositor) integration via `sodiboo/niri-flake`
+    # Why: Keep Niri configuration isolated and toggleable (see `modules/system/niri.nix`).
+    ./niri.nix
+
     # NVIDIA suspend/resume black-screen fix module (Wayland/Hyprland reliability)
     # Why: On NVIDIA + Wayland, resume can return to a black screen while TTY still works.
     # This module will enable NVIDIA modesetting + systemd sleep integration so the GPU
