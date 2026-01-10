@@ -50,6 +50,16 @@
   #   + sleep integration; this toggle turns it on.
   hydenix.system.nvidiaSleepFix.enable = true;
 
+  # RTX 3050 (Ampere) note:
+  # - NixOS requires explicitly choosing open vs closed NVIDIA kernel modules on driver >= 560.
+  # - For Turing or later GPUs (RTX series, GTX 16xx), NixOS suggests using the open kernel modules.
+  # - Your GPU is an RTX 3050, so we choose the open kernel modules.
+  #
+  # Implementation detail:
+  # - The sleep/resume module sets a conservative default (`open = false`) for broad compatibility.
+  # - This host-level override is the explicit, intentional choice for your RTX 3050.
+  hardware.nvidia.open = true;
+
   # NOTE: Leave these off unless you specifically confirm they help.
   # - `restartDisplayManagerOnResume` is a workaround that can kill your session.
   # - `forceDeepSleep` is hardware-dependent (s2idle vs deep).

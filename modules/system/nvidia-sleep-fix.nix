@@ -19,6 +19,8 @@
 #
 # NOTE:
 # - This module assumes you're using the proprietary NVIDIA driver (`nvidia`).
+# - NixOS driver versions >= 560 require explicitly setting `hardware.nvidia.open`
+#   (open kernel modules vs closed). This module sets a conservative default.
 # - If you're on `nouveau`, these options won't help and you should switch stacks
 #   or follow nouveau-specific guidance.
 #
@@ -84,12 +86,34 @@ in
       # merge there and comment out duplicates rather than deleting.
       modesetting.enable = lib.mkDefault true;
 
+      # NixOS (recent) asserts you must explicitly choose between the open-source
+      # kernel modules and the proprietary/closed kernel modules on driver versions >= 560.
+      #
+      # Why:
+      # - Without this, evaluation fails with:
+      #   "You must configure `hardware.nvidia.open` on NVIDIA driver versions >= 560."
+      #
+      # What:
+      # - We default to `false` because it is the safest choice across the widest range
+      #   of GPUs (especially pre-Turing / older cards).
+      # - If you have Turing or later (RTX series, GTX 16xx), consider setting this to
+      #   `true` (either here, or in your host config) after you confirm compatibility.
+      open = lib.mkDefault false;
+
       powerManagement = {
         enable = lib.mkDefault true;
 
-        # Fine-grained power management is generally beneficial on modern GPUs,
-        # but if you see instability, set this to false.
-        finegrained = lib.mkDefault true;
+        # Fine-grained power management requires PRIME offload to be enabled (NixOS assertion).
+        #
+        # Why:
+        # - Your evaluation failed with:
+        #   "Fine-grained power management requires offload to be enabled."
+        #
+        # What:
+        # - Default this to `false` to avoid forcing PRIME offload decisions in a
+        #   generic sleep/resume module. You can re-enable it if you explicitly
+        #   configure `hardware.nvidia.prime.offload.enable = true;`.
+        finegrained = lib.mkDefault false;
       };
     };
 
