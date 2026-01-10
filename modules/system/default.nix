@@ -5,6 +5,12 @@
     # ./example.nix - add your modules here
     ./plasma6.nix
     ./syncthing.nix
+
+    # NVIDIA suspend/resume black-screen fix module (Wayland/Hyprland reliability)
+    # Why: On NVIDIA + Wayland, resume can return to a black screen while TTY still works.
+    # This module will enable NVIDIA modesetting + systemd sleep integration so the GPU
+    # re-initializes cleanly after suspend.
+    ./nvidia-sleep-fix.nix
   ];
 
   environment.systemPackages = [

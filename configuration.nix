@@ -40,6 +40,22 @@
   #   };
   # };
 
+  # Enable NVIDIA suspend/resume reliability tweaks (Wayland/Hyprland black screen fix)
+  #
+  # Why:
+  # - You reported: NVIDIA + Wayland + Hyprland, resume returns a black screen.
+  # - TTY works (Ctrl+Alt+F3), which strongly indicates the OS is alive and the graphics
+  #   resume path is failing.
+  # - The dedicated module `modules/system/nvidia-sleep-fix.nix` wires NVIDIA modesetting
+  #   + sleep integration; this toggle turns it on.
+  hydenix.system.nvidiaSleepFix.enable = true;
+
+  # NOTE: Leave these off unless you specifically confirm they help.
+  # - `restartDisplayManagerOnResume` is a workaround that can kill your session.
+  # - `forceDeepSleep` is hardware-dependent (s2idle vs deep).
+  # hydenix.system.nvidiaSleepFix.restartDisplayManagerOnResume = true;
+  # hydenix.system.nvidiaSleepFix.forceDeepSleep = true;
+
   # Home Manager Configuration - manages user-specific configurations (dotfiles, themes, etc.)
   home-manager = {
     useGlobalPkgs = true;
