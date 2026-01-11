@@ -387,15 +387,15 @@ in
         "Super+Shift+E".action.quit = [ ];
 
         # Close Focused Window
-        "Super+Shift+Q".action.close-window = [ ];
+        "Super+Q".action.close-window = [ ];
 
         # Focus Column to the Left/Right
-        "Super+H".action.focus-column-left = [ ];
-        "Super+L".action.focus-column-right = [ ];
+        "Super+Left".action.focus-column-left = [ ];
+        "Super+Right".action.focus-column-right = [ ];
 
         # Move Column Left/Right
-        "Super+Shift+H".action.move-column-left = [ ];
-        "Super+Shift+L".action.move-column-right = [ ];
+        "Super+Shift+Left".action.move-column-left = [ ];
+        "Super+Shift+Right".action.move-column-right = [ ];
 
         # Switch Workspace Down/Up
         "Super+Ctrl+J".action.focus-workspace-down = [ ];
@@ -423,6 +423,21 @@ in
 
         # Open the Overview
         "Super+O".action.toggle-overview = [ ];
+
+        # Screenshots (native Niri)
+        #
+        # Why:
+        # - `Print` wasn't doing anything because there was no bind.
+        # - Niri ships built-in screenshot actions and an interactive UI, so we prefer that
+        #   over external tools (grim/slurp).
+        #
+        # Notes:
+        # - Niri screenshots are copied to the clipboard by default.
+        # - If you want to also save to disk via `screenshot-path`, we can add that once
+        #   we confirm the exact schema exposed by your `niri-flake` module.
+        "Print".action.screenshot = [ ];
+        "Super+Print".action.screenshot-screen = [ ];
+        "Shift+Print".action.screenshot-window = [ ];
       };
     };
   };
