@@ -16,7 +16,7 @@
     # Run `lshw -short` or `lspci` to identify your hardware
 
     # GPU Configuration (choose one):
-    inputs.nixos-hardware.nixosModules.common-gpu-nvidia # NVIDIA
+    # inputs.nixos-hardware.nixosModules.common-gpu-nvidia # NVIDIA
     # inputs.nixos-hardware.nixosModules.common-gpu-amd # AMD
 
     # CPU Configuration (choose one):
