@@ -1,156 +1,150 @@
-# Niri flake integration (`sodiboo/niri-flake`) — deliverable
+# Niri flake integration (`sodiboo/niri-flake`) — Home Manager-first + Noctalia Shell
 
-## What you asked for
+## Goal
 
-You wanted `https://github.com/sodiboo/niri-flake` added to your Hydenix-based NixOS flake.
+Configure Niri using **Home Manager** as the primary source of truth, and run **Noctalia Shell** as the “shell layer” inside your graphical session.
 
-This deliverable documents the **exact integration** that was implemented in your repo:
-- a new flake input (`inputs.niri`)
-- importing the upstream NixOS module (`inputs.niri.nixosModules.niri`)
-- a small, toggleable local system module (`hydenix.system.niri`) so you can turn Niri on/off cleanly
-- notes on how to validate with `nix flake check` and how to enable
+You specifically asked:
+- “i want everything managed via home manager”
+- “switch niri to use noctalia-shell”
+
+This document describes what was changed, how to enable it, and an important limitation about SDDM session selection.
 
 ---
 
-## Upstream interface (verified)
+## Summary of the approach
 
-From `sodiboo/niri-flake`:
+### What “Home Manager-first” means here
 
-- NixOS module: `nixosModules.niri`
-- Enable option: `programs.niri.enable = true;`
+Home Manager will manage:
+- Installing `niri` and `noctalia-shell` as user packages
+- Niri configuration (`~/.config/niri/config.kdl`) via `programs.niri.settings`
+- Launching `noctalia-shell` automatically as a `systemd --user` service
+
+### Important limitation: SDDM session list
+
+If you want “Niri” to appear in SDDM’s session chooser *the same way Plasma does*, that is typically **system-level** because SDDM reads session `.desktop` files from system paths (e.g. `/run/current-system/sw/share/wayland-sessions`).
+
+Home Manager can:
+- manage configs and user services
+- let you launch Niri manually (TTY: `niri`/`niri-session`, or from an existing session)
+
+Home Manager typically cannot:
+- reliably install/register display-manager session entries the same way system modules do
+
+**Practical implication:** With HM-only, you may not see “Niri” in SDDM even if Niri is installed and configured. If you want SDDM integration, keep/enable the NixOS-side session registration from `niri-flake`’s NixOS module.
+
+---
+
+## Upstream reference (verified)
+
+`sodiboo/niri-flake` provides:
+- Home Manager module: `inputs.niri.homeModules.niri`
+- Preferred config path: `programs.niri.settings` (build-time validated into `~/.config/niri/config.kdl`)
 - Packages:
-  - `packages.${system}.niri-stable`
-  - `packages.${system}.niri-unstable`
-- Cache option (default enabled upstream): `niri-flake.cache.enable`
+  - `inputs.niri.packages.${system}.niri-stable`
+  - `inputs.niri.packages.${system}.niri-unstable`
 
-The upstream NixOS module, when enabled, also:
-- installs `xdg-utils` + `programs.niri.package`
-- registers a display manager session via `services.displayManager.sessionPackages = [ cfg.package ];`
-- sets up portals (`xdg.portal.*`) and may add `xdg-desktop-portal-gnome` depending on build features
-- enables `security.polkit.enable = true` and sets up a polkit agent user service
-- enables `services.gnome.gnome-keyring.enable = true`
-- disables the nixpkgs module `programs/wayland/niri.nix` to avoid conflicts
+The upstream README explicitly recommends:
+- Use `programs.niri.settings` for config
+- Use their binary cache `https://niri.cachix.org` for faster installs
 
 ---
 
-## What changed in *your* repo
+## What changed in this repository (HM-first)
 
-### 1) Flake input added + module wired into system evaluation
+### 1) Import `niri-flake` Home Manager module
 
-File: `dotfiles/flake.nix`
+In your Home Manager module (`dotfiles/modules/hm/default.nix`) we import:
 
-- Added input `niri` pointing to `github:sodiboo/niri-flake`
-- Wired `niri`’s nixpkgs to follow your flake’s `nixpkgs` input:
-  - `inputs.niri.inputs.nixpkgs.follows = "nixpkgs";`
-- Imported upstream NixOS module into the system module list:
-  - `inputs.niri.nixosModules.niri`
+- `inputs.niri.homeModules.niri`
 
-Result: the `programs.niri.*` options are available to your system configuration.
+Why:
+- Adds `programs.niri.*` HM options
+- Enables declarative Niri configuration and build-time validation
 
 ---
 
-### 2) New local module: `hydenix.system.niri`
+### 2) Enable Niri via Home Manager
 
-File: `dotfiles/modules/system/niri.nix` (new)
-
-This module exists so **you** control Niri with a single toggle, without spreading config throughout `configuration.nix`.
-
-It adds the option namespace:
-
-- `hydenix.system.niri.enable` (default: module provides option; you choose value in `configuration.nix`)
-- `hydenix.system.niri.channel` (`"stable"` or `"unstable"`, default `"stable"`)
-- `hydenix.system.niri.enableCache` (bool, default `true`)
-
-When enabled, it sets:
+In `dotfiles/modules/hm/default.nix`, we configure:
 
 - `programs.niri.enable = true;`
-- `programs.niri.package = inputs.niri.packages.${system}.niri-stable|niri-unstable;` based on `channel`
-- `niri-flake.cache.enable` based on `enableCache` (as a default)
+- `programs.niri.package = inputs.niri.packages.${system}.niri-stable;` (defaulted to stable to avoid surprise “compile forever” events from unstable)
+- `programs.niri.settings.environment."NIXOS_OZONE_WL" = "1";` (useful for Electron apps under Wayland)
 
-This is intentionally **non-invasive**:
-- It does **not** disable Hyprland/HyDE.
-- It does **not** force Niri as the default session.
-- It simply makes Niri available (and session-registered by upstream) so you can select it at login.
-
----
-
-### 3) System module set now imports Niri module
-
-File: `dotfiles/modules/system/default.nix`
-
-- Added `./niri.nix` to the `imports = [ ... ];` list, with comments describing why.
+Notes:
+- This is intentionally “minimal config”; you can add more `programs.niri.settings` entries later.
+- `niri-stable` is chosen because you observed large Rust compiles when building `niri-unstable`.
 
 ---
 
-### 4) Niri is off by default in your host config
+### 3) Run Noctalia Shell automatically (Home Manager user service)
 
-File: `dotfiles/configuration.nix`
+In `dotfiles/modules/hm/default.nix`, we define a user service:
 
-- Added:
+- `systemd.user.services.noctalia-shell`
 
-  - `hydenix.system.niri.enable = false;`
+It:
+- Starts as part of `graphical-session.target`
+- Runs `${pkgs.noctalia-shell}/bin/noctalia-shell`
+- Restarts on failure
 
-…and commented examples for:
-- `hydenix.system.niri.channel`
-- `hydenix.system.niri.enableCache`
+This is the practical way to make Noctalia behave like your “shell UI layer” while using Niri (and also in other graphical sessions).
 
-This keeps your current setup stable until you explicitly opt in.
-
----
-
-## How to enable Niri
-
-Edit `dotfiles/configuration.nix` and set:
-
-- `hydenix.system.niri.enable = true;`
-
-Optional:
-- `hydenix.system.niri.channel = "stable";` (default) or `"unstable"`
-- `hydenix.system.niri.enableCache = true;` (default) or `false`
-
-After enabling, the upstream module should register a Niri session with your display manager via:
-- `services.displayManager.sessionPackages = [ cfg.package ];`
-
-If you use SDDM (common in Hydenix), you should be able to select **Niri** at the login session chooser.
+**If you want it to run only under Niri:** we can tighten the unit’s `WantedBy`/`PartOf` to a Niri-specific unit/target, but that depends on how your session is started and which user units exist at runtime.
 
 ---
 
-## Validation (no rebuild from me)
+## How to use
 
-Per your rules, validate with:
+### If you are OK launching Niri manually (HM-only)
 
-- `nix flake check`
+1. Ensure the system has Niri available (HM config takes care of the user side on activation).
+2. Launch Niri from a TTY session:
+   - `niri` or `niri-session` (depending on what is available in PATH)
 
-If there’s a failure, the most likely causes are:
-- `inputs` not being passed into a module that references it
-  - (This repo already passes `specialArgs = { inherit inputs; };` in `dotfiles/flake.nix`, so `modules/system/niri.nix` can use `inputs`.)
-- an evaluation conflict with portal/polkit/keyring if something else forces different settings
-- strict `nix.settings.substituters` policy conflicts (if you have hard overrides elsewhere)
-  - In that case, set `hydenix.system.niri.enableCache = false;` and manage caches yourself.
+Once Niri starts:
+- Home Manager-managed `noctalia-shell` service will start on `graphical-session.target` in your user session.
+
+### If you want Niri in SDDM session chooser (like Plasma)
+
+Keep the NixOS-side session registration from the upstream NixOS module (`inputs.niri.nixosModules.niri`) so it puts the session `.desktop` file in the system session path.
+
+You can still keep **all user config** in Home Manager:
+- Niri config (`programs.niri.settings`)
+- Noctalia Shell user service
+- launchers/bars/etc.
+
+This “hybrid” is the typical setup:
+- system installs/registers the session
+- home-manager manages the user experience
 
 ---
 
-## Mistake & correction note (engineering log)
+## Notes / gotchas
 
-- Initially, before reading upstream, I assumed the module might be `nixosModules.default` and the package might be `packages.${system}.default`.
-- After reading upstream `flake.nix`, I corrected this:
-  - module is `nixosModules.niri`
-  - packages are `packages.${system}.niri-stable` / `niri-unstable`
+- Niri isn’t “a desktop environment” like Plasma; it’s a compositor. Your “desktop shell” experience comes from:
+  - shell layer (`noctalia-shell`)
+  - launcher (`fuzzel`)
+  - wallpaper (`swaybg`)
+  - bar / notifications (optional: `waybar`, `mako`, etc.)
 
-This repo’s integration uses the correct upstream names.
+- If you see big compiles again:
+  - double-check you’re using `niri-stable` (not unstable)
+  - ensure you’re using the binary cache (if you’ve enabled it in your Nix settings)
 
 ---
 
-## Summary
+## Mistake & correction log (engineering hygiene)
 
-You now have:
-- `inputs.niri` in `dotfiles/flake.nix`
-- upstream Niri module imported into your system
-- a clean toggle: `hydenix.system.niri.enable`
-- stable/unstable selection support
-- optional Cachix enable/disable
+- Mistake: Earlier I treated SDDM session visibility as something Home Manager could guarantee.
+- Correction: Session registration for display managers is normally system-level; HM reliably manages user packages/config/services, but not SDDM session discovery.
 
-Next action for you:
-1. Set `hydenix.system.niri.enable = true;`
-2. Run `nix flake check` (save output to a log file per your workflow)
-3. Rebuild on your side when you’re ready
+---
+
+## Next steps (optional improvements)
+
+- Add more `programs.niri.settings` (outputs, keybinds, input, layout).
+- Refine Noctalia Shell service to run only under Niri (if you confirm your session start method and available user targets).
+- Add `mako`/`waybar` with `systemd.user.services.*` if you want a full desktop stack.

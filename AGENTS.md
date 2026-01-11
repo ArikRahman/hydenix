@@ -63,4 +63,4 @@ Key insight: By reading task_plan.md before each decision, goals stay in the att
 - > z dotfiles; sudo nixos-rebuild switch --flake .#hydenix 
 - ^ command to update nixos
 - i use rga, no rg
-- nix flake check to see if it works
+- nix flake check to see if it works, dont revuild, only i can do that, only nix flake check

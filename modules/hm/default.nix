@@ -317,6 +317,71 @@ in
     swaybg
   ];
 
+  # Niri + Noctalia Shell (Home Manager managed)
+  #
+  # Why:
+  # - You want to "switch niri to use noctalia-shell".
+  # - Niri doesn't have an official "shell" concept like GNOME; the practical
+  #   equivalent is to run your shell UI as a user service inside the session.
+  #
+  # Note:
+  # - This enables Niri via Home Manager. It does not register a login-session
+  #   entry in SDDM by itself.
+  programs.niri = {
+    # NOTE (mistake & correction):
+    # I initially enabled Niri from Home Manager (`programs.niri.enable = true`).
+    # In your setup, the Niri option set comes from the system-side `niri-flake`
+    # module wiring, so enabling/disabling the compositor belongs on the NixOS side.
+    #
+    # Fix: keep HM in charge of *configuration* (settings) and user services, but
+    # do not toggle Niri's NixOS enablement from Home Manager.
+    #
+    # enable = true;
+
+    # NOTE:
+    # If your option set includes `programs.niri.package`, you can pin it here.
+    # I'm commenting this out to avoid option/namespace mismatches across module wiring.
+    #
+    # package = inputs.niri.packages.${pkgs.stdenv.hostPlatform.system}.niri-stable;
+
+    # Minimal starter config. Extend as you like.
+    settings = {
+      # Helpful for Electron apps under Wayland.
+      environment."NIXOS_OZONE_WL" = "1";
+    };
+  };
+
+  # Start `noctalia-shell` automatically in your graphical session.
+  #
+  # Why:
+  # - Make Noctalia behave like the "shell" layer when you use Niri (and other
+  #   Wayland sessions too).
+  #
+  # If you only want it under Niri specifically:
+  # - we can refine `WantedBy`/`PartOf` to bind to a Niri-specific target, but that
+  #   depends on how your session is started (and whether a stable `niri.service`
+  #   exists in your user unit graph).
+  systemd.user.services.noctalia-shell = {
+    Unit = {
+      Description = "Noctalia Shell (user)";
+      PartOf = [ "graphical-session.target" ];
+      After = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "simple";
+      ExecStart = "${pkgs.noctalia-shell}/bin/noctalia-shell";
+      Restart = "on-failure";
+      RestartSec = 2;
+
+      # Small hardening baseline (optional, safe defaults for user services).
+      NoNewPrivileges = true;
+      PrivateTmp = true;
+    };
+    Install = {
+      WantedBy = [ "graphical-session.target" ];
+    };
+  };
+
   programs.ghostty = {
     enable = true;
     package = pkgs.ghostty;
