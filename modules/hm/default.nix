@@ -604,8 +604,12 @@ in
   programs.dank-material-shell = {
     enable = true;
 
-    # Start DMS automatically when a Wayland graphical session starts.
-    systemd.enable = true;
+    # NOTE: Prefer starting DMS via Niri spawn integration (single source of autostart),
+    # so you don't get duplicate DMS instances from both systemd + compositor startup.
+    #
+    # If you later want DMS available in non-Niri Wayland sessions too, flip this back on
+    # (and likely set `niri.enableSpawn = false;` to keep it single-start).
+    systemd.enable = false;
 
     # Niri integration
     #
