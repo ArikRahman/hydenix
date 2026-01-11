@@ -1,0 +1,43 @@
+warning: Git tree '/home/hydenix/Documents/dotfiles' is dirty
+evaluating flake...
+checking flake output 'nixosConfigurations'...
+checking NixOS configuration 'nixosConfigurations.hydenix'...
+error:
+       … while checking flake output 'nixosConfigurations'
+         at /nix/store/p0zxr837dkwzlyk1xh25dx1041w9z38x-source/flake.nix:90:7:
+           89|     {
+           90|       nixosConfigurations.hydenix = hydenixConfig;
+             |       ^
+           91|       nixosConfigurations.default = hydenixConfig;
+
+       … while checking the NixOS configuration 'nixosConfigurations.hydenix'
+         at /nix/store/p0zxr837dkwzlyk1xh25dx1041w9z38x-source/flake.nix:90:7:
+           89|     {
+           90|       nixosConfigurations.hydenix = hydenixConfig;
+             |       ^
+           91|       nixosConfigurations.default = hydenixConfig;
+
+       … while evaluating the option `system.build.toplevel':
+
+       … while evaluating definitions from `/nix/store/54jfyhwggfbsc5cr5c5qgbnwadkd84x8-source/nixos/modules/system/activation/top-level.nix':
+
+       … while evaluating the option `home-manager.users.hydenix.home.file."/home/hydenix/.config/niri-config".enable':
+
+       … while evaluating definitions from `/nix/store/l2pl49aczg4lhid2xgnr497z439sx3sm-source/modules/misc/xdg.nix':
+
+       … while evaluating the option `home-manager.users.hydenix.xdg.configFile.niri-config.enable':
+
+       … while evaluating definitions from `/nix/store/l2pl49aczg4lhid2xgnr497z439sx3sm-source/nixos/common.nix':
+
+       … while evaluating the option `home-manager.users.hydenix.programs.niri.finalConfig':
+
+       … while evaluating the option `home-manager.users.hydenix.programs.niri.config."[definition 1-entry 6]".children."[definition 1-entry 10]".children':
+
+       … while evaluating definitions from `/nix/store/l2pl49aczg4lhid2xgnr497z439sx3sm-source/nixos/common.nix':
+
+       … while evaluating the option `home-manager.users.hydenix.programs.niri.settings.binds."Super+BracketLeft".action':
+
+       (stack trace truncated; use '--show-trace' to show the full, detailed trace)
+
+       error: A definition for option `home-manager.users.hydenix.programs.niri.settings.binds."Super+BracketLeft".action' is not of type `niri action'. Definition values:
+       - In `/nix/store/p0zxr837dkwzlyk1xh25dx1041w9z38x-source/modules/hm': "consume-or-expel-window-left"

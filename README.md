@@ -66,3 +66,11 @@ hydenix/
 - [hydenix issues](https://github.com/richen604/hydenix/issues)
 - [hydenix discussions](https://github.com/richen604/hydenix/discussions)
 - [hyde discord](https://discord.gg/AYbJ9MJez7)
+
+# Arik's notes:
+- screenshot shortcuts
+  - Super + P: Snip screen.
+  - Super + Ctrl + P: Freeze and snip screen.
+  - Super + Alt + P: Print monitor.
+  - PrintScreen: Print all monitors.
+  - Super + Shift + P: Color picker.

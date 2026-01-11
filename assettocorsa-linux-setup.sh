@@ -6,7 +6,8 @@ status="$?"
 if [[ "$status" != "0" ]]; then
   exit "$status"
 fi
-# Enables usage of aliases inside script
+
+# Enables usage of aliases inside the script
 shopt -s expand_aliases
 
 # Preventing from running as root
@@ -16,13 +17,16 @@ if [[ $USER == "root" ]]; then
 fi
 
 # Versions
-GE_version="9-20"; CSP_version="0.2.11"
+GE_version="9-20"
+CSP_version="0.2.11"
+
 # Defining text styles for readablity
 bold=$(echo -e "\033[1m")
 reset=$(echo -e "\033[0m")
 error=$(echo -e "${bold}\033[31m")
 warning=$(echo -e "\033[33m")
 
+# Provides a yes/no prompt.
 # Internal functions
 function ask {
   while true; do
@@ -33,6 +37,8 @@ function ask {
     esac
   done
 }
+
+# Executes given command, exits with an error if the command fails.
 function subprocess {
   output="$("$@" 2>&1)"
   status=$?
@@ -47,6 +53,8 @@ ${warning}If this is an issue, please report it on Github.${reset}
     exit 1
   fi
 }
+
+# Returns the executable for given string, supports aliases.
 function get-exec {
   local cmd="$1"
   if ! declare -p BASH_ALIASES > /dev/null; then
@@ -64,8 +72,17 @@ function get-exec {
   fi
 }
 
+# Retruns 0 if the given variable is set, otherwise returns 1.
+function is-set {
+  varname="$1"
+  if [[ -z "${!varname+x}" ]]; then
+    return 1
+  fi
+  return 0
+}
+
 # Required packages
-required_packages=("wget" "tar" "unzip" "gio" "protontricks")
+required_packages=("wget" "tar" "unzip" "glib2" "protontricks")
 
 # Supported distros
 supported_apt=("debian" "ubuntu" "linuxmint" "pop")
@@ -73,42 +90,44 @@ supported_dnf=("fedora" "nobara" "ultramarine")
 supported_arch=("arch" "endeavouros" "steamos" "cachyos")
 supported_opensuse=("opensuse-tumbleweed")
 supported_slackware=("slackware" "salix")
+supported_gentoo=("gentoo")
 
 # Checking distro compatability
-OS_RELEASE="$(cat /etc/os-release)"
-function get_release {
-  local string
-  string="$(echo $OS_RELEASE | sed "s/.* $1=//g" | sed "s/$1=\"//g" |  sed "s/ .*//g" | sed "s/\"//g")"
-  if [[ string == "" ]]; then
-    return 1
-  fi
-  echo "$string"
-}
-OS_ID="$(get_release ID)"
-OS_LIKE="$(get_release ID_LIKE)"
-OS_NAME="$(get_release NAME)"
-if [[ ${supported_dnf[*]} =~ "$OS_ID" ]] || [[ ${supported_dnf[*]} =~ "$OS_LIKE" ]]; then
+source "/etc/os-release"
+subprocess is-set "ID"
+subprocess is-set "NAME"
+if ! is-set "ID_LIKE"; then
+  ID_LIKE="undefined"
+fi
+if [[ ${supported_dnf[*]} =~ "$ID" ]] || [[ ${supported_dnf[*]} =~ "$ID_LIKE" ]]; then
   pm_install="dnf install"
-elif [[ ${supported_apt[*]} =~ "$OS_ID" ]] || [[ ${supported_apt[*]} =~ "$OS_LIKE" ]]; then
+elif [[ ${supported_apt[*]} =~ "$ID" ]] || [[ ${supported_apt[*]} =~ "$ID_LIKE" ]]; then
   pm_install="apt install"
-elif [[ ${supported_arch[*]} =~ "$OS_ID" ]] || [[ ${supported_arch[*]} =~ "$OS_LIKE" ]]; then
+elif [[ ${supported_arch[*]} =~ "$ID" ]] || [[ ${supported_arch[*]} =~ "$ID_LIKE" ]]; then
   pm_install="pacman -S"
-elif [[ ${supported_opensuse[*]} =~ "$OS_ID" ]] || [[ ${supported_opensuse[*]} =~ "$OS_LIKE" ]]; then
+elif [[ ${supported_opensuse[*]} =~ "$ID" ]] || [[ ${supported_opensuse[*]} =~ "$ID_LIKE" ]]; then
   pm_install="zypper install"
-elif [[ ${supported_slackware[*]} =~ "$OS_ID" ]] || [[ ${supported_slackware[*]} =~ "$OS_LIKE" ]]; then
+elif [[ ${supported_slackware[*]} =~ "$ID" ]] || [[ ${supported_slackware[*]} =~ "$ID_LIKE" ]]; then
   pm_install="slackpkg install or sboinstall"
   required_packages=("wget" "tar" "infozip" "glib2" "protontricks")
+elif [[ ${supported_gentoo[*]} =~ "$ID" ]] || [[ ${supported_gentoo[*]} =~ "$ID_LIKE" ]]; then
+  required_packages=("net-misc/wget" "app-arch/tar" "app-arch/unzip" "dev-libs/glib2" "app-emulation/protontricks")
+  pm_install="emerge"
 else
   echo "\
-$OS_NAME is not currently supported.
+$NAME is not currently supported.
 You can open an issue on Github (https://github.com/sihawido/assettocorsa-linux-setup/issues) with your system details to add it as supported."
   exit 1
 fi
 
 # Checking if required packages are installed
-for package in ${required_packages[@]}; do
-  if ! get-exec "$package" > /dev/null; then
-    echo "$package is not installed, run ${bold}sudo $pm_install $package${reset} to install."
+for package in "${required_packages[@]}"; do
+  bin="$(basename "$package")"
+  if [[ "$bin" == "glib2" ]]; then
+    bin="gio"
+  fi
+  if ! get-exec "$bin" > /dev/null; then
+    echo "$bin is not installed, run ${bold}sudo $pm_install $package${reset} to install."
     exit 1
   fi
 done

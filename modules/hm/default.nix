@@ -7,24 +7,24 @@
 }:
 
 let
-  username = config.home.username;
-  mountPath = "/run/media/${username}/arik_s disk";
-  fixAriksDiskPerms = pkgs.writeShellScript "fix-ariks-disk-perms" ''
-    set -euo pipefail
-
-    p="${mountPath}"
-    if [ ! -d "$p" ]; then
-      exit 0
-    fi
-    if ! ${pkgs.util-linux}/bin/mountpoint -q "$p"; then
-      exit 0
-    fi
-
-    # Ensure the mount root is traversable/readable/writable for this user.
-    ${pkgs.acl}/bin/setfacl -m "u:${username}:rwx" "$p"
-    ${pkgs.acl}/bin/setfacl -m "d:u:${username}:rwx" "$p"
-  '';
-
+  # NOTE: Disabled per request: arik's disk daemon/permission fix.
+  # username = config.home.username;
+  # mountPath = "/run/media/${username}/arik_s disk";
+  # fixAriksDiskPerms = pkgs.writeShellScript "fix-ariks-disk-perms" ''
+  #   set -euo pipefail
+  #
+  #   p="${mountPath}"
+  #   if [ ! -d "$p" ]; then
+  #     exit 0
+  #   fi
+  #   if ! ${pkgs.util-linux}/bin/mountpoint -q "$p"; then
+  #     exit 0
+  #   fi
+  #
+  #   # Ensure the mount root is traversable/readable/writable for this user.
+  #   ${pkgs.acl}/bin/setfacl -m "u:${username}:rwx" "$p"
+  #   ${pkgs.acl}/bin/setfacl -m "d:u:${username}:rwx" "$p"
+  # '';
 in
 
 let
@@ -46,104 +46,150 @@ let
     (extension "bitwarden-password-manager" "{446900e4-71c2-419f-a6a7-df9c091e268b}")
     (extension "darkreader" "addon@darkreader.org")
     (extension "private-grammar-checker-harper" "harper@writewithharper.com")
+    (extension "youtube-recommended-videos" "myallychou@gmail.com")
   ];
 
-  zenWrapped = pkgs.wrapFirefox inputs.zen-browser.packages.${pkgs.system}.zen-browser-unwrapped {
-    extraPrefs = lib.concatLines (
-      lib.mapAttrsToList (
-        name: value: ''lockPref(${lib.strings.toJSON name}, ${lib.strings.toJSON value});''
-      ) prefs
-    );
+  zenWrapped =
+    pkgs.wrapFirefox
+      inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.zen-browser-unwrapped
+      {
+        extraPrefs = lib.concatLines (
+          lib.mapAttrsToList (
+            name: value: ''lockPref(${lib.strings.toJSON name}, ${lib.strings.toJSON value});''
+          ) prefs
+        );
 
-    extraPolicies = {
-      DisableTelemetry = true;
-      ExtensionSettings = builtins.listToAttrs extensions;
+        extraPolicies = {
+          DisableTelemetry = true;
+          ExtensionSettings = builtins.listToAttrs extensions;
 
-      # Custom search engines (Firefox/Zen enterprise policies).
-      #
-      # NOTE:
-      # - This config is modeled after the reference `configuration.nix` you shared.
-      # - These show up as selectable search engines; `Default` sets the default.
-      # - Brave here refers to **Brave Search**, not the Brave browser.
-      SearchEngines = {
-        Default = "Brave Search";
-        Add = [
-          {
-            Name = "Brave Search";
-            URLTemplate = "https://search.brave.com/search?q={searchTerms}";
-            IconURL = "https://search.brave.com/favicon.ico";
-            Alias = "@bs";
-          }
-          {
-            Name = "nixpkgs packages";
-            URLTemplate = "https://search.nixos.org/packages?query={searchTerms}";
-            IconURL = "https://wiki.nixos.org/favicon.ico";
-            Alias = "@np";
-          }
-          {
-            Name = "NixOS options";
-            URLTemplate = "https://search.nixos.org/options?query={searchTerms}";
-            IconURL = "https://wiki.nixos.org/favicon.ico";
-            Alias = "@no";
-          }
-          {
-            Name = "NixOS Wiki";
-            URLTemplate = "https://wiki.nixos.org/w/index.php?search={searchTerms}";
-            IconURL = "https://wiki.nixos.org/favicon.ico";
-            Alias = "@nw";
-          }
-          {
-            Name = "noogle";
-            URLTemplate = "https://noogle.dev/q?term={searchTerms}";
-            IconURL = "https://noogle.dev/favicon.ico";
-            Alias = "@ng";
-          }
-        ];
+          # Custom search engines (Firefox/Zen enterprise policies).
+
+          #
+
+          # NOTE:
+
+          # - This config is modeled after the reference `configuration.nix` you shared.
+
+          # - These show up as selectable search engines; `Default` sets the default.
+
+          # - Brave here refers to **Brave Search**, not the Brave browser.
+
+          SearchEngines = {
+
+            Default = "Brave Search";
+
+            Add = [
+
+              {
+
+                Name = "Brave Search";
+
+                URLTemplate = "https://search.brave.com/search?q={searchTerms}";
+
+                IconURL = "https://search.brave.com/favicon.ico";
+
+                Alias = "@bs";
+
+              }
+
+              {
+
+                Name = "nixpkgs packages";
+
+                URLTemplate = "https://search.nixos.org/packages?query={searchTerms}";
+
+                IconURL = "https://wiki.nixos.org/favicon.ico";
+
+                Alias = "@np";
+
+              }
+
+              {
+
+                Name = "NixOS options";
+
+                URLTemplate = "https://search.nixos.org/options?query={searchTerms}";
+
+                IconURL = "https://wiki.nixos.org/favicon.ico";
+
+                Alias = "@no";
+
+              }
+
+              {
+
+                Name = "NixOS Wiki";
+
+                URLTemplate = "https://wiki.nixos.org/w/index.php?search={searchTerms}";
+
+                IconURL = "https://wiki.nixos.org/favicon.ico";
+
+                Alias = "@nw";
+
+              }
+
+              {
+
+                Name = "noogle";
+
+                URLTemplate = "https://noogle.dev/q?term={searchTerms}";
+
+                IconURL = "https://noogle.dev/favicon.ico";
+
+                Alias = "@ng";
+
+              }
+
+            ];
+
+          };
+        };
       };
-    };
-  };
 
-  hyprsunsetctl = pkgs.writeShellScriptBin "hyprsunsetctl" ''
-    set -euo pipefail
-
-    uid="$(id -u)"
-    base="''${XDG_RUNTIME_DIR:-/run/user/$uid}/hypr"
-    hyprctl_bin="${pkgs.hyprland}/bin/hyprctl"
-
-    if [ ! -d "$base" ]; then
-      echo "hyprsunsetctl: expected Hyprland runtime dir at: $base" >&2
-      exit 1
-    fi
-
-    # Prefer the current shell's instance if it exists.
-    sig=""
-    if [ -n "''${HYPRLAND_INSTANCE_SIGNATURE-}" ] && [ -S "$base/''${HYPRLAND_INSTANCE_SIGNATURE}/.socket.sock" ]; then
-      sig="''${HYPRLAND_INSTANCE_SIGNATURE}"
-    else
-      # Otherwise, probe candidates (newest first) until one responds.
-      while IFS= read -r d; do
-        [ -n "$d" ] || continue
-        csig="$(basename "$d")"
-        if HYPRLAND_INSTANCE_SIGNATURE="$csig" "$hyprctl_bin" -j monitors >/dev/null 2>&1; then
-          sig="$csig"
-          break
-        fi
-      done < <(
-        for d in "$base"/*; do
-          [ -S "$d/.socket.sock" ] || continue
-          echo "$(stat -c '%Y %n' "$d")"
-        done | sort -nr | awk '{print $2}'
-      )
-    fi
-
-    if [ -z "${"sig:-"}" ]; then
-      echo "hyprsunsetctl: couldn't find a Hyprland instance socket in: $base" >&2
-      exit 1
-    fi
-
-    export HYPRLAND_INSTANCE_SIGNATURE="$sig"
-    exec "$hyprctl_bin" hyprsunset "$@"
-  '';
+  # NOTE: Disabled per request to remove hyprsunset from this repo.
+  #
+  # hyprsunsetctl = pkgs.writeShellScriptBin "hyprsunsetctl" ''
+  #   set -euo pipefail
+  #
+  #   uid="$(id -u)"
+  #   base="''${XDG_RUNTIME_DIR:-/run/user/$uid}/hypr"
+  #   hyprctl_bin="${pkgs.hyprland}/bin/hyprctl"
+  #
+  #   if [ ! -d "$base" ]; then
+  #     echo "hyprsunsetctl: expected Hyprland runtime dir at: $base" >&2
+  #     exit 1
+  #   fi
+  #
+  #   # Prefer the current shell's instance if it exists.
+  #   sig=""
+  #   if [ -n "''${HYPRLAND_INSTANCE_SIGNATURE-}" ] && [ -S "$base/''${HYPRLAND_INSTANCE_SIGNATURE}/.socket.sock" ]; then
+  #     sig="''${HYPRLAND_INSTANCE_SIGNATURE}"
+  #   else
+  #     # Otherwise, probe candidates (newest first) until one responds.
+  #     while IFS= read -r d; do
+  #       [ -n "$d" ] || continue
+  #       csig="$(basename "$d")"
+  #       if HYPRLAND_INSTANCE_SIGNATURE="$csig" "$hyprctl_bin" -j monitors >/dev/null 2>&1; then
+  #         sig="$csig"
+  #         break
+  #       fi
+  #     done < <(
+  #       for d in "$base"/*; do
+  #         [ -S "$d/.socket.sock" ] || continue
+  #         echo "$(stat -c '%Y %n' "$d")"
+  #       done | sort -nr | awk '{print $2}'
+  #     )
+  #   fi
+  #
+  #   if [ -z "${"sig:-"}" ]; then
+  #     echo "hyprsunsetctl: couldn't find a Hyprland instance socket in: $base" >&2
+  #     exit 1
+  #   fi
+  #
+  #   export HYPRLAND_INSTANCE_SIGNATURE="$sig"
+  #   exec "$hyprctl_bin" hyprsunset "$@"
+  # '';
 
   # Hydenix theme selection
   #
@@ -156,30 +202,45 @@ in
 {
   imports = [
     # ./example.nix - add your modules here
+
+    # DankMaterialShell upstream Home Manager module (provides `programs.dank-material-shell.*`)
+    inputs.dms.homeModules.dank-material-shell
+
+    # DankMaterialShell Niri integration module (provides `programs.dank-material-shell.niri.*`)
+    #
+    # Why:
+    # - Without this import, the `programs.dank-material-shell.niri` option set does not exist,
+    #   and your HM evaluation fails when you try to enable DMS-provided Niri keybind injection.
+    inputs.dms.homeModules.niri
+
+    # Keep HyDE state dirs (themes, wallbash cache, waybar styles, etc.) mutable/local,
+    # while still letting Nix/Home Manager manage the actual config files (ex: config.toml).
+    ./overrides/hyde-local-state.nix
   ];
 
-  systemd.user.paths.fix-ariks-disk-perms = {
-    Unit = {
-      Description = "Fix permissions for arik's disk when mounted";
-    };
-    Path = {
-      PathExists = mountPath;
-      Unit = "fix-ariks-disk-perms.service";
-    };
-    Install = {
-      WantedBy = [ "default.target" ];
-    };
-  };
-
-  systemd.user.services.fix-ariks-disk-perms = {
-    Unit = {
-      Description = "Ensure arik's disk is accessible to the user";
-    };
-    Service = {
-      Type = "oneshot";
-      ExecStart = fixAriksDiskPerms;
-    };
-  };
+  # NOTE: Disabled per request: arik's disk daemon/permission fix.
+  # systemd.user.paths.fix-ariks-disk-perms = {
+  #   Unit = {
+  #     Description = "Fix permissions for arik's disk when mounted";
+  #   };
+  #   Path = {
+  #     PathExists = mountPath;
+  #     Unit = "fix-ariks-disk-perms.service";
+  #   };
+  #   Install = {
+  #     WantedBy = [ "default.target" ];
+  #   };
+  # };
+  #
+  # systemd.user.services.fix-ariks-disk-perms = {
+  #   Unit = {
+  #     Description = "Ensure arik's disk is accessible to the user";
+  #   };
+  #   Service = {
+  #     Type = "oneshot";
+  #     ExecStart = fixAriksDiskPerms;
+  #   };
+  # };
 
   # home-manager options go here
   home.packages = with pkgs; [
@@ -194,8 +255,9 @@ in
     blesh
     localsend
 
-    #inputs.zen-browser.packages.${pkgs.system}.default
+    #inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
 
+    #Applications
     ayugram-desktop
     boxflat
     swaybg
@@ -205,17 +267,37 @@ in
     obsidian
     qbittorrent
     legcord
-    obs-studio
     reaper
     logseq
+    obs-studio
 
     seahorse
+
+    #Terminal tools
+    curl
+    unzip
+    wget
     atool
     httpie
     discordo # terminal discord
     blesh
     fzf
+    yq # yaml processor and json as well
     lazygit
+<<<<<<< HEAD
+    ripgrep-all # rga, ripgrep with extra file format support
+    gh
+    just
+    bottom # rust based top
+    zenith # more traditional top based on rust
+    nvd # useful for seeing difference in nix generations. syntax e.g.
+    # ```nvd diff /nix/var/nix/profiles/system-31-link /nix/var/nix/profiles/system-30-link```
+
+    #LSP and language tooling
+    clojure-lsp
+    nil
+    nixd
+=======
     ripgrep-all
     zellij
 
@@ -227,7 +309,22 @@ in
     nixd
     ruff
     gh
+>>>>>>> origin/main
     marksman
+    ruff # python rust based
+
+    zellij
+
+    #Language
+    babashka
+    clojure
+    clojure-lsp
+
+    jdk25 # jvm will outperform graalvm AOT with implementation of project leydus
+    # graalvmPackages.graalvm-ce
+
+    pandoc
+    protontricks
 
     curl
     wget
@@ -238,11 +335,174 @@ in
 
     # Preferred over screen shaders: hyprsunset uses Hyprland's CTM control,
     # so the filter won't show up in screenshots / recordings.
-    hyprsunset
-    hyprsunsetctl
+    #
+    # NOTE: Disabled per request to remove hyprsunset from this repo.
+    # hyprsunset
+    # hyprsunsetctl
     # pkgs.vscode - hydenix's vscode version
     # pkgs.userPkgs.vscode - your personal nixpkgs version
+
+    # Niri tooling
+    alacritty
+    fuzzel
+    # NOTE: Noctalia removed; replaced by DankMaterialShell (DMS) via upstream HM module.
+    swaybg
   ];
+
+  # Niri + DankMaterialShell (Home Manager managed)
+  #
+  # Why:
+  # - Replace Noctalia with DankMaterialShell (DMS).
+  # - Niri doesn't have an official "shell" concept like GNOME; the practical
+  #   equivalent is to run your shell UI as a user service inside the session.
+  #
+  # Implementation:
+  # - Use the upstream DMS Home Manager module (`programs.dank-material-shell.*`)
+  #   which provides a user systemd service (`dms`) when `systemd.enable = true`.
+  #
+  # Note:
+  # - This enables Niri via Home Manager. It does not register a login-session
+  #   entry in SDDM by itself.
+  programs.niri = {
+    # NOTE (mistake & correction):
+    # I initially enabled Niri from Home Manager (`programs.niri.enable = true`).
+    # In your setup, the Niri option set comes from the system-side `niri-flake`
+    # module wiring, so enabling/disabling the compositor belongs on the NixOS side.
+    #
+    # Fix: keep HM in charge of *configuration* (settings) and user services, but
+    # do not toggle Niri's NixOS enablement from Home Manager.
+    #
+    # enable = true;
+
+    # NOTE:
+    # If your option set includes `programs.niri.package`, you can pin it here.
+    # I'm commenting this out to avoid option/namespace mismatches across module wiring.
+    #
+    # package = inputs.niri.packages.${pkgs.stdenv.hostPlatform.system}.niri-stable;
+
+    # Minimal starter config + core compositor keybinds. Extend as you like.
+    settings = {
+      # Helpful for Electron apps under Wayland.
+      environment."NIXOS_OZONE_WL" = "1";
+
+      # Core Niri compositor keybinds (v25.08).
+      #
+      # NOTE (mistake & correction):
+      # What I got wrong:
+      # - I initially set `.action` to plain strings, but in `niri-flake` the option type
+      #   is `niri action`, represented as an attrset with a single key (the action name)
+      #   and a value that is its argument list (or a single arg).
+      # How I corrected it:
+      # - Use the documented schema: `"KEY".action.<action-name> = <args>;`
+      #   (see `sodiboo/niri-flake` docs: `programs.niri.settings.binds.<name>.action`).
+      #
+      # Why these binds:
+      # - DMS injects keybinds for *DMS features* (launcher, notifications, etc.) but not
+      #   core compositor actions (quit, close, focus/move columns, workspace up/down, overview).
+      #
+      binds = {
+        # Show Important Hotkeys
+        "Super+Slash".action.show-hotkey-overlay = [ ];
+
+        # Exit niri
+        "Super+Shift+E".action.quit = [ ];
+
+        # Close Focused Window
+        "Super+Q".action.close-window = [ ];
+
+        # Focus Column to the Left/Right
+        "Super+Left".action.focus-column-left = [ ];
+        "Super+Right".action.focus-column-right = [ ];
+
+        # Move Column Left/Right
+        "Super+Shift+Left".action.move-column-left = [ ];
+        "Super+Shift+Right".action.move-column-right = [ ];
+
+        # Switch Workspace Down/Up
+        "Super+Ctrl+J".action.focus-workspace-down = [ ];
+        "Super+Ctrl+K".action.focus-workspace-up = [ ];
+
+        # Move Column to Workspace Down/Up
+        "Super+Ctrl+Shift+J".action.move-column-to-workspace-down = [ ];
+        "Super+Ctrl+Shift+K".action.move-column-to-workspace-up = [ ];
+
+        # Switch Preset Column Widths
+        "Super+R".action.switch-preset-column-width = [ ];
+
+        # Maximize Column
+        "Super+F".action.maximize-column = [ ];
+
+        # Consume or Expel Window Left/Right
+        "Super+BracketLeft".action.consume-or-expel-window-left = [ ];
+        "Super+BracketRight".action.consume-or-expel-window-right = [ ];
+
+        # Move Window Between Floating and Tiling
+        "Super+Shift+Space".action.toggle-window-floating = [ ];
+
+        # Switch Focus Between Floating and Tiling
+        "Super+Tab".action.switch-focus-between-floating-and-tiling = [ ];
+
+        # Open the Overview
+        "Super+O".action.toggle-overview = [ ];
+
+        # Screenshots (native Niri)
+        #
+        # Why:
+        # - `Print` wasn't doing anything because there was no bind.
+        # - Niri ships built-in screenshot actions and an interactive UI, so we prefer that
+        #   over external tools (grim/slurp).
+        #
+        # Notes:
+        # - Niri screenshots are copied to the clipboard by default.
+        # - If you want to also save to disk via `screenshot-path`, we can add that once
+        #   we confirm the exact schema exposed by your `niri-flake` module.
+        "Print".action.screenshot = [ ];
+        "Super+Print".action.screenshot-screen = [ ];
+        "Shift+Print".action.screenshot-window = [ ];
+      };
+    };
+  };
+
+  # Start DankMaterialShell (DMS) automatically in your graphical session.
+  #
+  # Why:
+  # - Make DMS behave like the "shell" layer when you use Niri (and other Wayland
+  #   sessions too).
+  #
+  # If you only want it under Niri specifically:
+  # - we can refine `WantedBy`/`PartOf` to bind to a Niri-specific target, but that
+  #   depends on how your session is started (and whether a stable `niri.service`
+  #   exists in your user unit graph).
+  # NOTE: Noctalia autostart disabled; replaced by DankMaterialShell (DMS).
+  #
+  # What I got wrong earlier:
+  # - I treated "shell autostart" as something we needed to hand-roll for every shell.
+  # How I corrected it:
+  # - DMS provides an upstream Home Manager module that includes a `dms` user service,
+  #   so we enable that instead of maintaining our own unit here.
+  #
+  # systemd.user.services.noctalia-shell = {
+  #   Unit = {
+  #     Description = "Noctalia Shell (user)";
+  #     PartOf = [ "graphical-session.target" ];
+  #     After = [ "graphical-session.target" ];
+  #   };
+  #
+  #   Service = {
+  #     Type = "simple";
+  #     ExecStart = "${pkgs.noctalia-shell}/bin/noctalia-shell";
+  #     Restart = "on-failure";
+  #     RestartSec = 2;
+  #
+  #     # Small hardening baseline (optional, safe defaults for user services).
+  #     NoNewPrivileges = true;
+  #     PrivateTmp = true;
+  #   };
+  #
+  #   Install = {
+  #     WantedBy = [ "graphical-session.target" ];
+  #   };
+  # };
 
   programs.ghostty = {
     enable = true;
@@ -328,16 +588,26 @@ in
       '';
     });
 
+<<<<<<< HEAD
+    # NOTE: Home Manager renamed:
+    # - `programs.vscode.extensions`   -> `programs.vscode.profiles.default.extensions`
+    # - `programs.vscode.userSettings` -> `programs.vscode.profiles.default.userSettings`
+=======
     # NOTE (mistake & correction):
     # Home Manager renamed:
     # - `programs.vscode.extensions` -> `programs.vscode.profiles.default.extensions`
     # - `programs.vscode.userSettings` -> `programs.vscode.profiles.default.userSettings`
     # Updating to the new option names removes evaluation warnings.
+>>>>>>> origin/main
     profiles.default = {
       extensions = with pkgs.vscode-extensions; [
         catppuccin.catppuccin-vsc
         jnoortheen.nix-ide
       ];
+<<<<<<< HEAD
+
+=======
+>>>>>>> origin/main
       userSettings = {
         "workbench.colorTheme" = desiredTheme;
       };
@@ -431,45 +701,138 @@ in
   hydenix.hm.enable = true;
   hydenix.hm.dolphin.enable = false;
 
+  # DankMaterialShell (DMS)
+  #
+  # Why:
+  # - Replace Noctalia with DMS.
+  # - Let the upstream module manage packages + a robust user systemd unit.
+  programs.dank-material-shell = {
+    enable = true;
+
+    # NOTE: Prefer starting DMS via Niri spawn integration (single source of autostart),
+    # so you don't get duplicate DMS instances from both systemd + compositor startup.
+    #
+    # If you later want DMS available in non-Niri Wayland sessions too, flip this back on
+    # (and likely set `niri.enableSpawn = false;` to keep it single-start).
+    systemd.enable = false;
+
+    # Niri integration
+    #
+    # Why:
+    # - Your `niri validate` error shows `include "..."` nodes at the top of the generated
+    #   Niri config. That means DMS is currently emitting Niri `include` statements, but
+    #   your installed Niri build does not support the `include` node.
+    #
+    # Fix:
+    # - Disable DMS "includes" feature so the generated Niri config is self-contained
+    #   (no `include` nodes), while still keeping DMS keybind/spawn integration enabled.
+    niri = {
+      enableKeybinds = true;
+      enableSpawn = true;
+
+      # DMS Niri integration: keep the generated config self-contained because
+      # your `niri validate` showed `include "..."` is not supported by your Niri build.
+      includes.enable = false;
+
+      # Minimal Niri default keybind set (core compositor actions).
+      #
+      # NOTE (mistake & correction):
+      # What I got wrong:
+      # - I attempted to configure `programs.dank-material-shell.niri.keybinds = { ... }`,
+      #   but your installed DMS module does not expose that option set (it failed `nix flake check`).
+      # How I corrected it:
+      # - I’m commenting this block back out to restore a valid evaluation.
+      #
+      # Guidance (next step):
+      # - To bind the core Niri compositor actions (exit, close, focus left/right, workspace up/down, overview, etc.),
+      #   implement them via `programs.niri.settings` once we confirm the exact schema your Niri module expects.
+      #
+      # keybinds = {
+      #   enable = true;
+      #
+      #   # Use "Super" as the primary modifier.
+      #   mod = "Super";
+      #
+      #   # System / session
+      #   showHotkeys = "Super+Slash"; # Show Important Hotkeys
+      #   exit = "Super+Shift+E"; # Exit niri
+      #   closeWindow = "Super+Shift+Q"; # Close Focused Window
+      #
+      #   # Focus columns
+      #   focusLeft = "Super+H"; # Focus Column to the Left
+      #   focusRight = "Super+L"; # Focus Column to the Right
+      #
+      #   # Move columns
+      #   moveLeft = "Super+Shift+H"; # Move Column Left
+      #   moveRight = "Super+Shift+L"; # Move Column Right
+      #
+      #   # Workspaces (relative)
+      #   workspaceDown = "Super+Ctrl+J"; # Switch Workspace Down
+      #   workspaceUp = "Super+Ctrl+K"; # Switch Workspace Up
+      #   moveToWorkspaceDown = "Super+Ctrl+Shift+J"; # Move Column to Workspace Down
+      #   moveToWorkspaceUp = "Super+Ctrl+Shift+K"; # Move Column to Workspace Up
+      #
+      #   # Layout / sizing
+      #   cyclePresetWidths = "Super+R"; # Switch Preset Column Widths
+      #   maximizeColumn = "Super+F"; # Maximize Column
+      #
+      #   # Column consume/expel (swap/absorb semantics)
+      #   consumeOrExpelLeft = "Super+BracketLeft"; # Consume or Expel Window Left
+      #   consumeOrExpelRight = "Super+BracketRight"; # Consume or Expel Window Right
+      #
+      #   # Floating/tiling
+      #   toggleFloating = "Super+Shift+Space"; # Move Window Between Floating and Tiling
+      #   focusFloatingTiling = "Super+Tab"; # Switch Focus Between Floating and Tiling
+      #
+      #   # Overview
+      #   overview = "Super+O"; # Open the Overview
+      # };
+    };
+  };
+
   # This is the setting Hydenix uses as the source-of-truth on rebuild.
   hydenix.hm.theme.active = desiredTheme;
 
   # Prefer hyprsunset over Hyprland screen shaders so the effect isn't captured
   # by screenshots / recordings.
-  hydenix.hm.hyprland.shaders.active = "disable";
+  #
+  # NOTE: Disabled per request to remove hyprsunset from this repo.
+  # hydenix.hm.hyprland.shaders.active = "disable";
 
   # hyprsunset configuration (~/.config/hypr/hyprsunset.conf)
-  xdg.configFile."hypr/hyprsunset.conf".text = ''
-    max-gamma = 150
-
-    profile {
-        time = 7:30
-        identity = true
-    }
-
-    profile {
-        time = 21:00
-        temperature = 4500
-        gamma = 1.0
-    }
-  '';
+  # NOTE: Disabled per request to remove hyprsunset from this repo.
+  # xdg.configFile."hypr/hyprsunset.conf".text = ''
+  #   max-gamma = 150
+  #
+  #   profile {
+  #       time = 7:30
+  #       identity = true
+  #   }
+  #
+  #   profile {
+  #       time = 21:00
+  #       temperature = 4500
+  #       gamma = 1.0
+  #   }
+  # '';
 
   # Start hyprsunset automatically in the user session.
-  systemd.user.services.hyprsunset = {
-    Unit = {
-      Description = "Hyprsunset (night light)";
-      PartOf = [ "graphical-session.target" ];
-      After = [ "graphical-session.target" ];
-    };
-    Service = {
-      ExecStart = "${pkgs.hyprsunset}/bin/hyprsunset";
-      Restart = "on-failure";
-      RestartSec = 2;
-    };
-    Install = {
-      WantedBy = [ "graphical-session.target" ];
-    };
-  };
+  # NOTE: Disabled per request to remove hyprsunset from this repo.
+  # systemd.user.services.hyprsunset = {
+  #   Unit = {
+  #     Description = "Hyprsunset (night light)";
+  #     PartOf = [ "graphical-session.target" ];
+  #     After = [ "graphical-session.target" ];
+  #   };
+  #   Service = {
+  #     ExecStart = "${pkgs.hyprsunset}/bin/hyprsunset";
+  #     Restart = "on-failure";
+  #     RestartSec = 2;
+  #   };
+  #   Install = {
+  #     WantedBy = [ "graphical-session.target" ];
+  #   };
+  # };
   hydenix.hm.hyprland.extraConfig = ''
     cursor {
         no_hardware_cursors = true
@@ -479,66 +842,82 @@ in
     }
   '';
   hydenix.hm.editors.vscode.enable = false;
+
+  # NOTE (performance fix): Hydenix's theme module makes themes available by copying them
+  # as "mutable home files" into `~/.config/hyde/themes/<ThemeName>` during the
+  # `mutableFileGeneration` activation step. With many themes enabled, this turns into
+  # multi-GB reads/writes (your run showed ~8G read / ~1.7G written) and a ~1m pause.
+  #
+  # Option B: Stop Home Manager from installing the entire theme package list.
+  # We keep only the active theme name (via `hydenix.hm.theme.active`) and leave the
+  # theme directory itself as runtime/local state (HyDE can manage it).
+  #
+  # NOTE (rule compliance): I am not deleting the old theme list; I am commenting it
+  # out so you can restore it if you accept the activation-time I/O cost.
   hydenix.hm.theme.themes = [
-    "1 Bit"
-    "AbyssGreen"
-    "Abyssal Wave"
-    "Amethyst Aura"
-    "AncientAliens"
-    "Another World"
-    "Bad Blood"
-    "BlueSky"
-    "Breezy Autumn"
-    "Cat Latte"
-    "Catppuccin Latte"
-    "Catppuccin Macchiato"
-    "Catppuccin Mocha"
-    "Code Garden"
-    "Cosmic Blue"
-    "Crimson Blade"
-    "Crimson Blue"
-    "Decay Green"
-    "DoomBringers"
-    "Dracula"
-    "Edge Runner"
-    "Electra"
-    "Eternal Arctic"
-    "Ever Blushing"
-    "Frosted Glass"
-    "Graphite Mono"
-    "Green Lush"
-    "Greenify"
-    "Grukai"
-    "Gruvbox Retro"
-    "Hack the Box"
-    "Ice Age"
-    "Joker"
-    "LimeFrenzy"
-    "Mac OS"
-    "Material Sakura"
-    "Monokai"
-    "Monterey Frost"
-    "Moonlight"
-    "Nightbrew"
-    "Nordic Blue"
-    "Obsidian Purple"
-    "One Dark"
-    "Oxo Carbon"
-    "Paranoid Sweet"
-    "Peace Of Mind"
-    "Pixel Dream"
-    "Rain Dark"
-    "Red Stone"
-    "Rose Pine"
-    "Scarlet Night"
-    "Sci fi"
-    "Solarized Dark"
-    "Synth Wave"
-    "Timeless Dream"
-    "Tokyo Night"
-    "Tundra"
-    "Vanta Black"
-    "Windows 11"
+    desiredTheme
   ];
+
+  # hydenix.hm.theme.themes = [
+  #   "1 Bit"
+  #   "AbyssGreen"
+  #   "Abyssal Wave"
+  #   "Amethyst Aura"
+  #   "AncientAliens"
+  #   "Another World"
+  #   "Bad Blood"
+  #   "BlueSky"
+  #   "Breezy Autumn"
+  #   "Cat Latte"
+  #   "Catppuccin Latte"
+  #   "Catppuccin Macchiato"
+  #   "Catppuccin Mocha"
+  #   "Code Garden"
+  #   "Cosmic Blue"
+  #   "Crimson Blade"
+  #   "Crimson Blue"
+  #   "Decay Green"
+  #   "DoomBringers"
+  #   "Dracula"
+  #   "Edge Runner"
+  #   "Electra"
+  #   "Eternal Arctic"
+  #   "Ever Blushing"
+  #   "Frosted Glass"
+  #   "Graphite Mono"
+  #   "Green Lush"
+  #   "Greenify"
+  #   "Grukai"
+  #   "Gruvbox Retro"
+  #   "Hack the Box"
+  #   "Ice Age"
+  #   "Joker"
+  #   "LimeFrenzy"
+  #   "Mac OS"
+  #   "Material Sakura"
+  #   "Monokai"
+  #   "Monterey Frost"
+  #   "Moonlight"
+  #   "Nightbrew"
+  #   "Nordic Blue"
+  #   "Obsidian Purple"
+  #   "One Dark"
+  #   "Oxo Carbon"
+  #   "Paranoid Sweet"
+  #   "Peace Of Mind"
+  #   "Pixel Dream"
+  #   "Rain Dark"
+  #   "Red Stone"
+  #   "Rose Pine"
+  #   "Scarlet Night"
+  #   "Sci fi"
+  #   "Solarized Dark"
+  #   "Synth Wave"
+  #   "Timeless Dream"
+  #   "Tokyo Night"
+  #   "Tundra"
+  #   "Vanta Black"
+  #   "Windows 11"
+  # ];
   # Visit https://github.com/richen604/hydenix/blob/main/docs/options.md for more options
 }

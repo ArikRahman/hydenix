@@ -45,12 +45,12 @@
 
     # CPU Configuration (choose one):
     # inputs.nixos-hardware.nixosModules.common-cpu-amd # AMD CPUs
-    # inputs.nixos-hardware.nixosModules.common-cpu-intel # Intel CPUs
+    inputs.nixos-hardware.nixosModules.common-cpu-intel # Intel CPUs
 
     # Additional Hardware Modules - Uncomment based on your system type:
     # inputs.nixos-hardware.nixosModules.common-hidpi # High-DPI displays
-    # inputs.nixos-hardware.nixosModules.common-pc-laptop # Laptops
-    # inputs.nixos-hardware.nixosModules.common-pc-ssd # SSD storage
+    inputs.nixos-hardware.nixosModules.common-pc-laptop # Laptops
+    inputs.nixos-hardware.nixosModules.common-pc-ssd # SSD storage
   ];
 
   # If enabling NVIDIA, you will be prompted to configure hardware.nvidia
@@ -64,20 +64,52 @@
   #   };
   # };
 
+  # Enable NVIDIA suspend/resume reliability tweaks (Wayland/Hyprland black screen fix)
+  #
+  # Why:
+  # - You reported: NVIDIA + Wayland + Hyprland, resume returns a black screen.
+  # - TTY works (Ctrl+Alt+F3), which strongly indicates the OS is alive and the graphics
+  #   resume path is failing.
+  # - The dedicated module `modules/system/nvidia-sleep-fix.nix` wires NVIDIA modesetting
+  #   + sleep integration; this toggle turns it on.
+  hydenix.system.nvidiaSleepFix.enable = true;
+
+  # RTX 3050 (Ampere) note:
+  # - NixOS requires explicitly choosing open vs closed NVIDIA kernel modules on driver >= 560.
+  # - For Turing or later GPUs (RTX series, GTX 16xx), NixOS suggests using the open kernel modules.
+  # - Your GPU is an RTX 3050, so we choose the open kernel modules.
+  #
+  # Implementation detail:
+  # - The sleep/resume module sets a conservative default (`open = false`) for broad compatibility.
+  # - This host-level override is the explicit, intentional choice for your RTX 3050.
+  hardware.nvidia.open = true;
+
+  # NOTE: Leave these off unless you specifically confirm they help.
+  # - `restartDisplayManagerOnResume` is a workaround that can kill your session.
+  # - `forceDeepSleep` is hardware-dependent (s2idle vs deep).
+  # hydenix.system.nvidiaSleepFix.restartDisplayManagerOnResume = true;
+  # hydenix.system.nvidiaSleepFix.forceDeepSleep = true;
+
+  # Niri (Wayland compositor) — optional, installed alongside Hyprland/HyDE
+  #
+  # Why:
+  # - Adds the Niri session + required plumbing via `sodiboo/niri-flake` when enabled.
+  # - Does NOT change your default session; you can select Niri at login (SDDM) when you want.
+  #
+  # How:
+  # - This toggle is defined by `./modules/system/niri.nix` and wires into `programs.niri.*`.
+  #
+  # NOTE: keep this `false` until you’re ready to try it.
+  hydenix.system.niri.enable = true;
+  # Optional knobs:
+  hydenix.system.niri.channel = "stable"; # or "unstable", but use stable for cachix'd binary (low compile time)
+  hydenix.system.niri.enableCache = true; # enable niri.cachix.org via upstream module
+
   # Home Manager Configuration - manages user-specific configurations (dotfiles, themes, etc.)
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;
-
-    # NOTE (mistake & correction):
-    # Home Manager attempted to back up an existing file (e.g. `~/.config/mimeapps.list`)
-    # to `~/.config/mimeapps.list.<backup-extension>`, but that backup path already existed,
-    # so activation failed to avoid clobbering it.
-    #
-    # We keep *one* backup extension here (this is the NixOS module source-of-truth) and
-    # pick a value that won't collide with the already-existing `mimeapps.list.hm-bak`.
-    backupFileExtension = "hm-bak3";
-
+    backupFileExtension = "backup-2026_01_11-00_11_59";
     extraSpecialArgs = { inherit inputs; };
     # User Configuration - REQUIRED: Change "hydenix" to your actual username
     # This must match the username you define in users.users below
@@ -199,11 +231,18 @@
       "https://cache.nixos.org"
       "https://nix-community.cachix.org"
       "https://hyprland.cachix.org"
+
+      # Niri binary cache (sodiboo/niri-flake)
+      # Why: avoids long local compiles by allowing Nix to download prebuilt niri derivations.
+      "https://niri.cachix.org"
     ];
     trusted-public-keys = [
       "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
       "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
+
+      # Niri binary cache public key (sodiboo/niri-flake)
+      "niri.cachix.org-1:Wv0OmO7PsuocRKzfDoJ3mulSl7Z6oezYhGhR+3W2964="
     ];
   };
 

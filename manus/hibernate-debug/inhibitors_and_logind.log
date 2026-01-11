@@ -1,0 +1,16 @@
+=== systemctl hibernate (dry run: show inhibitors) ===
+WHO            UID  USER    PID   COMM           WHAT  WHY                                                                     MODE
+NetworkManager 0    root    1009  NetworkManager sleep NetworkManager needs to turn off networks                               delay
+UPower         0    root    21394 upowerd        sleep Pause device polling                                                    delay
+hypridle       1001 hydenix 21288 hypridle       sleep Hypridle wants to delay sleep until it's before_sleep handling is done. delay
+
+3 inhibitors listed.
+
+=== logind.conf ===
+# /etc/systemd/logind.conf -> /nix/store/1vmc0nb11a7jxgqhhfb32l74757gm9kz-etc-systemd-logind.conf
+[Login]
+KillUserProcesses=false
+
+
+
+# Main configuration file systemd/logind.conf.d/*.conf not found

@@ -1,0 +1,31 @@
+warning: Git tree '/home/hydenix/Documents/dotfiles' is dirty
+evaluating flake...
+checking flake output 'nixosConfigurations'...
+checking NixOS configuration 'nixosConfigurations.hydenix'...
+error:
+       … while checking flake output 'nixosConfigurations'
+         at /nix/store/m74a1vnpmm29zm5jazbmji699a646dqv-source/flake.nix:84:7:
+           83|     {
+           84|       nixosConfigurations.hydenix = hydenixConfig;
+             |       ^
+           85|       nixosConfigurations.default = hydenixConfig;
+
+       … while checking the NixOS configuration 'nixosConfigurations.hydenix'
+         at /nix/store/m74a1vnpmm29zm5jazbmji699a646dqv-source/flake.nix:84:7:
+           83|     {
+           84|       nixosConfigurations.hydenix = hydenixConfig;
+             |       ^
+           85|       nixosConfigurations.default = hydenixConfig;
+
+       … while evaluating the option `system.build.toplevel':
+
+       … while evaluating definitions from `/nix/store/54jfyhwggfbsc5cr5c5qgbnwadkd84x8-source/nixos/modules/system/activation/top-level.nix':
+
+       … while evaluating the option `assertions':
+
+       … while evaluating definitions from `/nix/store/l2pl49aczg4lhid2xgnr497z439sx3sm-source/nixos/common.nix':
+
+       (stack trace truncated; use '--show-trace' to show the full, detailed trace)
+
+       error: The option `home-manager.users.hydenix.programs.niri.enable' does not exist. Definition values:
+       - In `/nix/store/m74a1vnpmm29zm5jazbmji699a646dqv-source/modules/hm': true

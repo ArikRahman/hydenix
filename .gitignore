@@ -3,5 +3,5 @@
 result
 .git-hooks
 reference/
-.lsp/.cache/
-.clj-kondo/.cache/
+.lsp/
+.clj-kondo/

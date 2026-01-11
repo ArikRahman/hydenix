@@ -5,6 +5,16 @@
     # Your nixpkgs
     zen-browser.url = "github:youwen5/zen-browser-flake";
     zen-browser.inputs.nixpkgs.follows = "nixpkgs";
+    niri = {
+      url = "github:sodiboo/niri-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # Dank Material Shell (Wayland shell; provides Home Manager + NixOS modules)
+    dms = {
+      url = "github:AvengeMedia/DankMaterialShell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
@@ -25,7 +35,7 @@
   };
 
   outputs =
-    { ... }@inputs:
+    inputs:
     let
       # NOTE (mistake & correction):
       # I originally used a local `system` binding, but newer nixpkgs warns that the
@@ -60,6 +70,21 @@
           inherit inputs;
         };
         modules = [
+          # Record the flake's Git revision into the built system closure so each
+          # NixOS generation can be mapped back to the exact commit.
+          #
+          # Query it with:
+          #   nixos-version --configuration-revision
+          #
+          # NOTE: If the flake source is "dirty", Nix may provide `self.dirtyRev`.
+          # If neither revision is available, this becomes `null`.
+          (
+            { ... }:
+            {
+              system.configurationRevision = inputs.self.rev or inputs.self.dirtyRev or null;
+            }
+          )
+          inputs.niri.nixosModules.niri
           ./configuration.nix
         ];
       };
