@@ -1,0 +1,25 @@
+Communicate with the running niri instance
+
+Usage: niri msg [OPTIONS] <COMMAND>
+
+Commands:
+  outputs           List connected outputs
+  workspaces        List workspaces
+  windows           List open windows
+  layers            List open layer-shell surfaces
+  keyboard-layouts  Get the configured keyboard layouts
+  focused-output    Print information about the focused output
+  focused-window    Print information about the focused window
+  pick-window       Pick a window with the mouse and print information about it
+  pick-color        Pick a color from the screen with the mouse
+  action            Perform an action
+  output            Change output configuration temporarily
+  event-stream      Start continuously receiving events from the compositor
+  version           Print the version of the running niri instance
+  request-error     Request an error from the running niri instance
+  overview-state    Print the overview state
+  help              Print this message or the help of the given subcommand(s)
+
+Options:
+  -j, --json  Format output as JSON
+  -h, --help  Print help

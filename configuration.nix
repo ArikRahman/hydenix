@@ -78,14 +78,14 @@
   # NOTE: keep this `false` until you’re ready to try it.
   hydenix.system.niri.enable = true;
   # Optional knobs:
-  hydenix.system.niri.channel = "stable"; # or "unstable"
+  hydenix.system.niri.channel = "stable"; # or "unstable", but use stable for cachix'd binary (low compile time)
   hydenix.system.niri.enableCache = true; # enable niri.cachix.org via upstream module
 
   # Home Manager Configuration - manages user-specific configurations (dotfiles, themes, etc.)
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;
-    backupFileExtension = "backup-2026_01_10-23_40_59";
+    backupFileExtension = "backup-2026_01_11-00_11_59";
     extraSpecialArgs = { inherit inputs; };
     # User Configuration - REQUIRED: Change "hydenix" to your actual username
     # This must match the username you define in users.users below

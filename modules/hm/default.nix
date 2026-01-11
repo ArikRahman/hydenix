@@ -206,6 +206,13 @@ in
     # DankMaterialShell upstream Home Manager module (provides `programs.dank-material-shell.*`)
     inputs.dms.homeModules.dank-material-shell
 
+    # DankMaterialShell Niri integration module (provides `programs.dank-material-shell.niri.*`)
+    #
+    # Why:
+    # - Without this import, the `programs.dank-material-shell.niri` option set does not exist,
+    #   and your HM evaluation fails when you try to enable DMS-provided Niri keybind injection.
+    inputs.dms.homeModules.niri
+
     # Keep HyDE state dirs (themes, wallbash cache, waybar styles, etc.) mutable/local,
     # while still letting Nix/Home Manager manage the actual config files (ex: config.toml).
     ./overrides/hyde-local-state.nix
@@ -352,10 +359,71 @@ in
     #
     # package = inputs.niri.packages.${pkgs.stdenv.hostPlatform.system}.niri-stable;
 
-    # Minimal starter config. Extend as you like.
+    # Minimal starter config + core compositor keybinds. Extend as you like.
     settings = {
       # Helpful for Electron apps under Wayland.
       environment."NIXOS_OZONE_WL" = "1";
+
+      # Core Niri compositor keybinds (v25.08).
+      #
+      # NOTE (mistake & correction):
+      # What I got wrong:
+      # - I initially set `.action` to plain strings, but in `niri-flake` the option type
+      #   is `niri action`, represented as an attrset with a single key (the action name)
+      #   and a value that is its argument list (or a single arg).
+      # How I corrected it:
+      # - Use the documented schema: `"KEY".action.<action-name> = <args>;`
+      #   (see `sodiboo/niri-flake` docs: `programs.niri.settings.binds.<name>.action`).
+      #
+      # Why these binds:
+      # - DMS injects keybinds for *DMS features* (launcher, notifications, etc.) but not
+      #   core compositor actions (quit, close, focus/move columns, workspace up/down, overview).
+      #
+      binds = {
+        # Show Important Hotkeys
+        "Super+Slash".action.show-hotkey-overlay = [ ];
+
+        # Exit niri
+        "Super+Shift+E".action.quit = [ ];
+
+        # Close Focused Window
+        "Super+Shift+Q".action.close-window = [ ];
+
+        # Focus Column to the Left/Right
+        "Super+H".action.focus-column-left = [ ];
+        "Super+L".action.focus-column-right = [ ];
+
+        # Move Column Left/Right
+        "Super+Shift+H".action.move-column-left = [ ];
+        "Super+Shift+L".action.move-column-right = [ ];
+
+        # Switch Workspace Down/Up
+        "Super+Ctrl+J".action.focus-workspace-down = [ ];
+        "Super+Ctrl+K".action.focus-workspace-up = [ ];
+
+        # Move Column to Workspace Down/Up
+        "Super+Ctrl+Shift+J".action.move-column-to-workspace-down = [ ];
+        "Super+Ctrl+Shift+K".action.move-column-to-workspace-up = [ ];
+
+        # Switch Preset Column Widths
+        "Super+R".action.switch-preset-column-width = [ ];
+
+        # Maximize Column
+        "Super+F".action.maximize-column = [ ];
+
+        # Consume or Expel Window Left/Right
+        "Super+BracketLeft".action.consume-or-expel-window-left = [ ];
+        "Super+BracketRight".action.consume-or-expel-window-right = [ ];
+
+        # Move Window Between Floating and Tiling
+        "Super+Shift+Space".action.toggle-window-floating = [ ];
+
+        # Switch Focus Between Floating and Tiling
+        "Super+Tab".action.switch-focus-between-floating-and-tiling = [ ];
+
+        # Open the Overview
+        "Super+O".action.toggle-overview = [ ];
+      };
     };
   };
 
@@ -539,17 +607,78 @@ in
     # Start DMS automatically when a Wayland graphical session starts.
     systemd.enable = true;
 
-    # NOTE: Upstream DMS has a `homeModules.niri` module for Niri integration, but the
-    # base `homeModules.dank-material-shell` does NOT expose `programs.dank-material-shell.niri.*`.
+    # Niri integration
     #
-    # If you want DMS-managed Niri keybinds/spawn/includes later, we can import:
-    #   inputs.dms.homeModules.niri
-    # and then configure the Niri integration options that module provides.
+    # Why:
+    # - Your `niri validate` error shows `include "..."` nodes at the top of the generated
+    #   Niri config. That means DMS is currently emitting Niri `include` statements, but
+    #   your installed Niri build does not support the `include` node.
     #
-    # niri = {
-    #   enableKeybinds = true;
-    #   enableSpawn = true;
-    # };
+    # Fix:
+    # - Disable DMS "includes" feature so the generated Niri config is self-contained
+    #   (no `include` nodes), while still keeping DMS keybind/spawn integration enabled.
+    niri = {
+      enableKeybinds = true;
+      enableSpawn = true;
+
+      # DMS Niri integration: keep the generated config self-contained because
+      # your `niri validate` showed `include "..."` is not supported by your Niri build.
+      includes.enable = false;
+
+      # Minimal Niri default keybind set (core compositor actions).
+      #
+      # NOTE (mistake & correction):
+      # What I got wrong:
+      # - I attempted to configure `programs.dank-material-shell.niri.keybinds = { ... }`,
+      #   but your installed DMS module does not expose that option set (it failed `nix flake check`).
+      # How I corrected it:
+      # - I’m commenting this block back out to restore a valid evaluation.
+      #
+      # Guidance (next step):
+      # - To bind the core Niri compositor actions (exit, close, focus left/right, workspace up/down, overview, etc.),
+      #   implement them via `programs.niri.settings` once we confirm the exact schema your Niri module expects.
+      #
+      # keybinds = {
+      #   enable = true;
+      #
+      #   # Use "Super" as the primary modifier.
+      #   mod = "Super";
+      #
+      #   # System / session
+      #   showHotkeys = "Super+Slash"; # Show Important Hotkeys
+      #   exit = "Super+Shift+E"; # Exit niri
+      #   closeWindow = "Super+Shift+Q"; # Close Focused Window
+      #
+      #   # Focus columns
+      #   focusLeft = "Super+H"; # Focus Column to the Left
+      #   focusRight = "Super+L"; # Focus Column to the Right
+      #
+      #   # Move columns
+      #   moveLeft = "Super+Shift+H"; # Move Column Left
+      #   moveRight = "Super+Shift+L"; # Move Column Right
+      #
+      #   # Workspaces (relative)
+      #   workspaceDown = "Super+Ctrl+J"; # Switch Workspace Down
+      #   workspaceUp = "Super+Ctrl+K"; # Switch Workspace Up
+      #   moveToWorkspaceDown = "Super+Ctrl+Shift+J"; # Move Column to Workspace Down
+      #   moveToWorkspaceUp = "Super+Ctrl+Shift+K"; # Move Column to Workspace Up
+      #
+      #   # Layout / sizing
+      #   cyclePresetWidths = "Super+R"; # Switch Preset Column Widths
+      #   maximizeColumn = "Super+F"; # Maximize Column
+      #
+      #   # Column consume/expel (swap/absorb semantics)
+      #   consumeOrExpelLeft = "Super+BracketLeft"; # Consume or Expel Window Left
+      #   consumeOrExpelRight = "Super+BracketRight"; # Consume or Expel Window Right
+      #
+      #   # Floating/tiling
+      #   toggleFloating = "Super+Shift+Space"; # Move Window Between Floating and Tiling
+      #   focusFloatingTiling = "Super+Tab"; # Switch Focus Between Floating and Tiling
+      #
+      #   # Overview
+      #   overview = "Super+O"; # Open the Overview
+      # };
+    };
   };
 
   # This is the setting Hydenix uses as the source-of-truth on rebuild.

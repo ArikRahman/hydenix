@@ -1,0 +1,35 @@
+warning: Git tree '/home/hydenix/Documents/dotfiles' is dirty
+evaluating flake...
+checking flake output 'nixosConfigurations'...
+checking NixOS configuration 'nixosConfigurations.hydenix'...
+error:
+       … while checking flake output 'nixosConfigurations'
+         at /nix/store/3i5wjxjkk91s0qfj385zlbppz95b6d85-source/flake.nix:90:7:
+           89|     {
+           90|       nixosConfigurations.hydenix = hydenixConfig;
+             |       ^
+           91|       nixosConfigurations.default = hydenixConfig;
+
+       … while checking the NixOS configuration 'nixosConfigurations.hydenix'
+         at /nix/store/3i5wjxjkk91s0qfj385zlbppz95b6d85-source/flake.nix:90:7:
+           89|     {
+           90|       nixosConfigurations.hydenix = hydenixConfig;
+             |       ^
+           91|       nixosConfigurations.default = hydenixConfig;
+
+       … while evaluating the option `system.build.toplevel':
+
+       … while evaluating definitions from `/nix/store/54jfyhwggfbsc5cr5c5qgbnwadkd84x8-source/nixos/modules/system/activation/top-level.nix':
+
+       … while evaluating the option `assertions':
+
+       … while evaluating definitions from `/nix/store/l2pl49aczg4lhid2xgnr497z439sx3sm-source/nixos/common.nix':
+
+       (stack trace truncated; use '--show-trace' to show the full, detailed trace)
+
+       error: The option `home-manager.users.hydenix.programs.dank-material-shell.niri' does not exist. Definition values:
+       - In `/nix/store/3i5wjxjkk91s0qfj385zlbppz95b6d85-source/modules/hm':
+           {
+             enableKeybinds = true;
+             enableSpawn = true;
+           }
