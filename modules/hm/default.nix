@@ -284,7 +284,6 @@ in
     fzf
     yq # yaml processor and json as well
     lazygit
-<<<<<<< HEAD
     ripgrep-all # rga, ripgrep with extra file format support
     gh
     just
@@ -297,7 +296,7 @@ in
     clojure-lsp
     nil
     nixd
-=======
+
     ripgrep-all
     zellij
 
@@ -309,7 +308,7 @@ in
     nixd
     ruff
     gh
->>>>>>> origin/main
+
     marksman
     ruff # python rust based
 
@@ -588,26 +587,22 @@ in
       '';
     });
 
-<<<<<<< HEAD
     # NOTE: Home Manager renamed:
     # - `programs.vscode.extensions`   -> `programs.vscode.profiles.default.extensions`
     # - `programs.vscode.userSettings` -> `programs.vscode.profiles.default.userSettings`
-=======
+
     # NOTE (mistake & correction):
     # Home Manager renamed:
     # - `programs.vscode.extensions` -> `programs.vscode.profiles.default.extensions`
     # - `programs.vscode.userSettings` -> `programs.vscode.profiles.default.userSettings`
     # Updating to the new option names removes evaluation warnings.
->>>>>>> origin/main
+
     profiles.default = {
       extensions = with pkgs.vscode-extensions; [
         catppuccin.catppuccin-vsc
         jnoortheen.nix-ide
       ];
-<<<<<<< HEAD
 
-=======
->>>>>>> origin/main
       userSettings = {
         "workbench.colorTheme" = desiredTheme;
       };
