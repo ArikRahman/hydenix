@@ -1,8 +1,5 @@
 #! /usr/bin/env bash
-
-# Checks for unbound variables
-set -u
-
+set -u # Checks for unbound variables
 # Checking for errors before executing
 bash -n "$0"
 status="$?"
@@ -30,6 +27,7 @@ error=$(echo -e "${bold}\033[31m")
 warning=$(echo -e "\033[33m")
 
 # Provides a yes/no prompt.
+# Internal functions
 function ask {
   while true; do
     read -rp "$* [y/n]: " yn

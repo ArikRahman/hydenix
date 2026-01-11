@@ -279,11 +279,12 @@ in
     wget
     atool
     httpie
-    discordo
+    discordo # terminal discord
     blesh
     fzf
     yq # yaml processor and json as well
     lazygit
+<<<<<<< HEAD
     ripgrep-all # rga, ripgrep with extra file format support
     gh
     just
@@ -296,6 +297,19 @@ in
     clojure-lsp
     nil
     nixd
+=======
+    ripgrep-all
+    zellij
+
+    clojure
+    clojure-lsp
+    babashka
+    jdk25 # LTS until 2031
+    nil
+    nixd
+    ruff
+    gh
+>>>>>>> origin/main
     marksman
     ruff # python rust based
 
@@ -310,6 +324,13 @@ in
     # graalvmPackages.graalvm-ce
 
     pandoc
+    protontricks
+
+    curl
+    wget
+    unzip
+    pandoc # document converter
+
     protontricks
 
     # Preferred over screen shaders: hyprsunset uses Hyprland's CTM control,
@@ -497,6 +518,34 @@ in
 
   programs.yazi.enable = true;
 
+  # Git config is managed declaratively to avoid tools (like `gh`) trying to write to
+  # a read-only/symlinked config (common when Home Manager manages XDG paths).
+  #
+  # NOTE (mistake & correction):
+  # I initially set `programs.git.userName` / `programs.git.userEmail` here, but Hydenix
+  # already defines `programs.git.settings.user.email = false` in its own git module.
+  # That produced a type conflict (string vs false). To stop conflicting with Hydenix,
+  # we only configure the GitHub URL rewrite here and let Hydenix (or you) own identity.
+  programs.git = {
+    enable = true;
+
+    # Intentionally NOT setting `userName` / `userEmail` here to avoid conflicting with Hydenix.
+
+    # NOTE (mistake & correction):
+    # Home Manager renamed `programs.git.extraConfig` to `programs.git.settings`.
+    # Updating to the new option removes evaluation warnings.
+    settings = {
+      # Prefer HTTPS for GitHub (matches `gh`'s recommended default).
+      url."https://github.com/".insteadOf = [
+        "git@github.com:"
+        "ssh://git@github.com/"
+      ];
+
+      # Optional: keep the default branch consistent with GitHub UI.
+      init.defaultBranch = "main";
+    };
+  };
+
   programs.bash = {
     enable = true;
     bashrcExtra = ''
@@ -539,15 +588,26 @@ in
       '';
     });
 
+<<<<<<< HEAD
     # NOTE: Home Manager renamed:
     # - `programs.vscode.extensions`   -> `programs.vscode.profiles.default.extensions`
     # - `programs.vscode.userSettings` -> `programs.vscode.profiles.default.userSettings`
+=======
+    # NOTE (mistake & correction):
+    # Home Manager renamed:
+    # - `programs.vscode.extensions` -> `programs.vscode.profiles.default.extensions`
+    # - `programs.vscode.userSettings` -> `programs.vscode.profiles.default.userSettings`
+    # Updating to the new option names removes evaluation warnings.
+>>>>>>> origin/main
     profiles.default = {
       extensions = with pkgs.vscode-extensions; [
         catppuccin.catppuccin-vsc
         jnoortheen.nix-ide
       ];
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/main
       userSettings = {
         "workbench.colorTheme" = desiredTheme;
       };
@@ -594,7 +654,37 @@ in
   # HyDE commonly launches terminals via `xdg-terminal-exec`, which consults
   # `xdg-terminals.list` preference files. Putting Ghostty first makes
   # terminal keybinds/launchers prefer it without uninstalling Kitty.
+  #
+  # NOTE (mistake & correction):
+  # I initially treated this as a simple "default terminal" preference issue.
+  # That does not override a hardcoded Hyprland keybind that explicitly runs `kitty`.
+  # The correct fix is to also define/override the Hyprland keybind source-of-truth
+  # via Hydenix's Hyprland keybindings module (below).
   home.sessionVariables.TERMINAL = "ghostty";
+
+  # Hyprland keybind override (HyDE):
+  # Force `SUPER + T` to launch Ghostty instead of Kitty, regardless of HyDE defaults.
+  #
+  # Rationale: Some HyDE configs hardcode `kitty` in the terminal keybind.
+  # Managing it here makes the behavior reproducible across rebuilds.
+  hydenix.hm.hyprland.keybindings.extraConfig = ''
+    # Terminal: Ghostty
+    #
+    # NOTE (mistake & correction):
+    # I previously added a second `SUPER + T` bind which caused *both* actions to
+    # trigger (HyDE's default kitty bind + this ghostty bind).
+    #
+    # Hyprland doesn't have an "unbind" directive for prior binds in included
+    # configs, but it *does* support consuming the key with a `pass` bind.
+    # We consume `SUPER + T` first so the earlier kitty bind won't run, then we
+    # re-bind it to Ghostty.
+    #
+    # If you still see both terminals, it means HyDE loads another bind *after*
+    # this extraConfig; in that case, switch this from `extraConfig` to
+    # `overrideConfig` in the Hydenix Hyprland module implementation.
+    bind = SUPER, T, pass
+    bind = SUPER, T, exec, ghostty
+  '';
 
   # Preferred terminal list for xdg-terminal-exec (Default Terminal spec impl).
   # This file is read from `$XDG_CONFIG_HOME/xdg-terminal-exec/xdg-terminals.list`.

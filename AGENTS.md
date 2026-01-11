@@ -1,8 +1,12 @@
-# Hydenix Project Context for AI Agents
+# Hydenix Project Context for AI Agents, an index for referencing relevant project documents
 
 ## Project Overview
 Hydenix is a NixOS configuration template using Flakes. It allows users to customize their NixOS setup, add packages, and configure themes. Based off https://github.com/richen604/hydenix
+<<<<<<< HEAD
 Custom Niri flake is also being used at https://github.com/sodiboo/niri-flake
+=======
+My repo is https://github.com/ArikRahman/hydenix
+>>>>>>> origin/main
 
 ## Key Files and Directories
 
@@ -23,6 +27,7 @@ Custom Niri flake is also being used at https://github.com/sodiboo/niri-flake
 - Comment thoroughly on why you're adding something
 - everytime you make a mistake, comment what you got wrong and how you corrected it
 - instead of debugging from terminal, dump output into log text file workflow
+<<<<<<< HEAD
 - stop deleting lines, and rather, comment them out and make note of why you are getting rid of them
 ----------
 Manus workflow - According to manus:
@@ -65,3 +70,16 @@ Key insight: By reading task_plan.md before each decision, goals stay in the att
 - ^ command to update nixos
 - i use rga, no rg
 - AI should  use nix flake check to see if it works and compiles, dont nixos rebuild, only user can do that, only nix flake check when AI
+- be conservative about deleting lines, and rather, comment them out and make note of why you are getting rid of them. get rid of clutter and revise comments as necessary though. be precise
+- if i have to do a command, the goal of nix is to make things reproducible. make note of it in appendix.md
+- if you're troubleshooting, use troubleshooting.md to log complex things
+- im using nushell btw. use semicolons and other nushell syntax 
+
+## Decision Log / Gotchas
+
+
+- > z hydenix; sudo nixos-rebuild switch --flake .#hydenix 
+- ^ command to update nixos
+- personal notes
+  - to make external drive work, may have to ```sudo chown -R hydenix:users /mnt/arik_s_disk/SteamLibrary/steamapps/compatdata```
+  -dota 2 audio cuts out whenf inding match, fix with launch option ```-sdlaudiodriver pulse```
