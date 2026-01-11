@@ -76,10 +76,10 @@
   # - This toggle is defined by `./modules/system/niri.nix` and wires into `programs.niri.*`.
   #
   # NOTE: keep this `false` until you’re ready to try it.
-  hydenix.system.niri.enable = false;
+  hydenix.system.niri.enable = true;
   # Optional knobs:
-  # hydenix.system.niri.channel = "stable";   # or "unstable"
-  # hydenix.system.niri.enableCache = true;  # enable niri.cachix.org via upstream module
+  hydenix.system.niri.channel = "unstable"; # or "unstable"
+  hydenix.system.niri.enableCache = true; # enable niri.cachix.org via upstream module
 
   # Home Manager Configuration - manages user-specific configurations (dotfiles, themes, etc.)
   home-manager = {
