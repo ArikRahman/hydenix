@@ -18,6 +18,26 @@
 
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
+    # Doom Emacs (pinned upstream) + Doom HM module
+    #
+    # Why:
+    # - Mirrors your reference setup that keeps Doom's upstream repo pinned as a flake input.
+    # - Provides the `programs.doom-emacs` Home Manager module via `nix-doom-emacs-unstraightened`.
+    doomemacs = {
+      url = "github:doomemacs/doomemacs";
+      flake = false;
+    };
+
+    nix-doom-emacs-unstraightened = {
+      url = "github:marienz/nix-doom-emacs-unstraightened";
+
+      # NOTE (mistake & correction):
+      # I initially set this to follow `nixpkgs` automatically, but the reference setup
+      # intentionally does NOT follow your nixpkgs so the module can manage its own overlay inputs.
+      # The correct reference behavior is: don't follow (`""`).
+      inputs.nixpkgs.follows = "";
+    };
+
     # Hydenix
     hydenix = {
       # Available inputs:

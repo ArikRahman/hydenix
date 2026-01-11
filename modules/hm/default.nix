@@ -25,6 +25,23 @@ let
   #   ${pkgs.acl}/bin/setfacl -m "u:${username}:rwx" "$p"
   #   ${pkgs.acl}/bin/setfacl -m "d:u:${username}:rwx" "$p"
   # '';
+  #
+  # NOTE (mistake & correction):
+  # I initially tried to "just enable Doom" without wiring it to XDG + an Emacs daemon.
+  # Doom works best when its directories are explicit and stable, so we declare the
+  # XDG-based env vars and enable `services.emacs` below.
+
+  # Doom Emacs private config
+  #
+  # Why:
+  # - You want the private Doom config to live *under* `modules/hm` so it’s guaranteed to be
+  #   included in the flake source and can be referenced reliably.
+  #
+  # NOTE (mistake & correction):
+  # - I previously placed `.doom.d` at the repo root and referenced it via `../../.doom.d`.
+  #   That can break depending on what gets copied into the flake source during evaluation.
+  # - Fix: move the Doom private dir under `modules/hm` and reference it via `./.doom.d`.
+  doomPrivateDir = ./doom.d;
 in
 
 let
@@ -580,7 +597,7 @@ in
   };
 
   programs.vscode = {
-    enable = true;
+    enable = false;
     package = pkgs.vscode.overrideAttrs (oldAttrs: {
       postFixup = (oldAttrs.postFixup or "") + ''
         wrapProgram $out/bin/code --add-flags "--password-store=gnome-libsecret"
@@ -639,6 +656,72 @@ in
     "x-scheme-handler/https" = [ "zen.desktop" ];
     "text/html" = [ "zen.desktop" ];
     "inode/directory" = [ "org.gnome.Nautilus.desktop" ];
+  };
+
+  ############################
+  # Doom Emacs (XDG layout) + Emacs daemon
+  ############################
+  #
+  # Why:
+  # - Mirrors the reference setup: Doom + private config in XDG locations.
+  # - Enables an Emacs daemon so `emacsclient` is instant and GUI frames work reliably in Wayland sessions.
+  #
+  # NOTE:
+  # - This assumes your flake already imports `inputs.nix-doom-emacs-unstraightened.homeModule`.
+  #   If it doesn't, evaluation will fail because `programs.doom-emacs` won't exist. In that case,
+  #   the correct fix is to add that import at the flake/home-manager wiring level.
+  xdg.enable = true;
+
+  # NOTE (mistake & correction):
+  # I originally added a second `home.sessionVariables = { ... };` assignment for Doom.
+  # Home Manager treats that as a duplicate definition because this file already sets
+  # `home.sessionVariables.<NAME> = ...` elsewhere.
+  #
+  # Fix: define Doom variables using the attribute form (`home.sessionVariables.<NAME>`)
+  # so they merge cleanly with the existing assignments.
+  home.sessionVariables.EMACSDIR = "${config.xdg.configHome}/emacs";
+  home.sessionVariables.DOOMDIR = "${config.xdg.configHome}/doom";
+  home.sessionVariables.DOOMLOCALDIR = "${config.xdg.dataHome}/doom";
+  home.sessionVariables.DOOMPROFILELOADFILE = "${config.xdg.stateHome}/doom-profiles-load.el";
+
+  home.sessionPath = (config.home.sessionPath or [ ]) ++ [
+    "${config.xdg.configHome}/emacs/bin"
+  ];
+
+  programs.doom-emacs = {
+    enable = true;
+    doomDir = doomPrivateDir;
+  };
+
+  # Put Doom + config in XDG
+  #
+  # Why:
+  # - Matches your reference: `~/.config/emacs` points at the pinned upstream Doom repo,
+  #   and `~/.config/doom` points at your private Doom config.
+  #
+  # NOTE (mistake & correction):
+  # - I previously only sourced the private Doom dir, which meant the upstream Doom repo
+  #   was not being staged into XDG and you wouldn't get the same “Doom installed via XDG”
+  #   behavior as the reference.
+  #
+  # Requirements:
+  # - Your flake must provide `inputs.doomemacs` (added in `dotfiles/flake.nix`).
+  xdg.configFile."emacs".source = inputs.doomemacs;
+  xdg.configFile."doom".source = doomPrivateDir;
+
+  services.emacs = {
+    enable = true;
+
+    # Helps avoid “daemon started too early” issues for GUI frames.
+    startWithUserSession = "graphical";
+
+    # Optional: makes $EDITOR use emacsclient
+    defaultEditor = true;
+
+    # IMPORTANT:
+    # Prefer the Emacs package produced by the Doom module when available.
+    # If this option is absent in your module version, comment it back out.
+    # package = config.programs.doom-emacs.package;
   };
 
   # Optional: some CLI tools consult $BROWSER.

@@ -118,6 +118,18 @@
       {
         imports = [
           inputs.hydenix.homeModules.default
+
+          # Doom Emacs Home Manager module.
+          #
+          # Why:
+          # - Exposes `programs.doom-emacs.*` options so you can configure Doom declaratively.
+          #
+          # NOTE (mistake & correction):
+          # - I previously enabled Doom options in HM config without importing this module,
+          #   which would fail evaluation with “option `programs.doom-emacs` does not exist”.
+          # - Fix: import the module here (flake input is `inputs.nix-doom-emacs-unstraightened`).
+          inputs.nix-doom-emacs-unstraightened.homeModule
+
           ./modules/hm # Your custom home-manager modules (configure hydenix.hm here!)
         ];
       };

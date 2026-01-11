@@ -5,4 +5,5 @@ do  ```sudo chown -R hydenix:users /mnt/arik_s_disk/SteamLibrary/steamapps/compa
 do  ```nix flake update``` to update flake inputs
 do  ```gh auth login``` to login to github cli
 do  ```gh repo clone ArikRahman/hydenix``` to clone hydenix repo
+do Optional: run ```nix flake update nixpkgs``` which will make Unstraightened reuse more dependencies already on your system.
 - dota 2 audio cuts out whenf inding match, fix with launch option ```-sdlaudiodriver pulse```
