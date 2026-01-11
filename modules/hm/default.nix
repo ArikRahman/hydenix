@@ -684,7 +684,12 @@ in
   home.sessionVariables.DOOMLOCALDIR = "${config.xdg.dataHome}/doom";
   home.sessionVariables.DOOMPROFILELOADFILE = "${config.xdg.stateHome}/doom-profiles-load.el";
 
-  home.sessionPath = (config.home.sessionPath or [ ]) ++ [
+  # NOTE (mistake & correction):
+  # I previously referenced `config.home.sessionPath` while defining `home.sessionPath`,
+  # which can cause infinite recursion in Home Manager's module system.
+  #
+  # Fix: define `home.sessionPath` directly (HM will merge lists from multiple modules).
+  home.sessionPath = [
     "${config.xdg.configHome}/emacs/bin"
   ];
 
@@ -715,8 +720,13 @@ in
     # Helps avoid “daemon started too early” issues for GUI frames.
     startWithUserSession = "graphical";
 
-    # Optional: makes $EDITOR use emacsclient
-    defaultEditor = true;
+    # NOTE (mistake & correction):
+    # I previously set `defaultEditor = true;`, which makes Home Manager set `$EDITOR`
+    # to an Emacs derivation. Hydenix already sets `$EDITOR` (ex: "code"), so this
+    # created a type conflict (string vs derivation) during evaluation.
+    #
+    # Fix: disable Emacs taking over `$EDITOR` and set it explicitly below.
+    defaultEditor = false;
 
     # IMPORTANT:
     # Prefer the Emacs package produced by the Doom module when available.
@@ -725,6 +735,12 @@ in
   };
 
   # Optional: some CLI tools consult $BROWSER.
+  #
+  # Editor:
+  # - Keep this a plain string (not a derivation) to avoid HM type conflicts.
+  # - You asked to use Zed.
+  home.sessionVariables.EDITOR = lib.mkForce "zed";
+
   home.sessionVariables.BROWSER = "zen";
   home.sessionVariables.FILEMANAGER = "nautilus";
 

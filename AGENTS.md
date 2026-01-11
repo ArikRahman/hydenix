@@ -83,3 +83,5 @@ Key insight: By reading task_plan.md before each decision, goals stay in the att
 - personal notes
   - to make external drive work, may have to ```sudo chown -R hydenix:users /mnt/arik_s_disk/SteamLibrary/steamapps/compatdata```
   -dota 2 audio cuts out whenf inding match, fix with launch option ```-sdlaudiodriver pulse```
+- if new files or directories are made, will have to lazygit and stage and commit them or nix flake check will fail
+- increment ```backupFileExtension = "backup_date_time";``` and increment it when clobbering might happen
