@@ -85,7 +85,7 @@
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;
-    backupFileExtension = "backup-2026_01_08-16_12_59";
+    backupFileExtension = "backup-2026_01_10-23_40_59";
     extraSpecialArgs = { inherit inputs; };
     # User Configuration - REQUIRED: Change "hydenix" to your actual username
     # This must match the username you define in users.users below
