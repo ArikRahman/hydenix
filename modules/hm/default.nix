@@ -295,8 +295,7 @@ in
     clojure
     clojure-lsp
 
-
-    jdk25 #jvm will outperform graalvm AOT with implementation of project leydus
+    jdk25 # jvm will outperform graalvm AOT with implementation of project leydus
     # graalvmPackages.graalvm-ce
 
     pandoc
@@ -310,6 +309,12 @@ in
     # hyprsunsetctl
     # pkgs.vscode - hydenix's vscode version
     # pkgs.userPkgs.vscode - your personal nixpkgs version
+
+    # Niri tooling
+    alacritty
+    fuzzel
+    noctalia-shell
+    swaybg
   ];
 
   programs.ghostty = {
