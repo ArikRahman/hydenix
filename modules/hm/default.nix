@@ -46,6 +46,7 @@ let
     (extension "bitwarden-password-manager" "{446900e4-71c2-419f-a6a7-df9c091e268b}")
     (extension "darkreader" "addon@darkreader.org")
     (extension "private-grammar-checker-harper" "harper@writewithharper.com")
+    (extension "youtube-recommended-videos" "myallychou@gmail.com")
   ];
 
   zenWrapped =
@@ -202,6 +203,9 @@ in
   imports = [
     # ./example.nix - add your modules here
 
+    # DankMaterialShell upstream Home Manager module (provides `programs.dank-material-shell.*`)
+    inputs.dms.homeModules.dank-material-shell
+
     # Keep HyDE state dirs (themes, wallbash cache, waybar styles, etc.) mutable/local,
     # while still letting Nix/Home Manager manage the actual config files (ex: config.toml).
     ./overrides/hyde-local-state.nix
@@ -313,16 +317,20 @@ in
     # Niri tooling
     alacritty
     fuzzel
-    noctalia-shell
+    # NOTE: Noctalia removed; replaced by DankMaterialShell (DMS) via upstream HM module.
     swaybg
   ];
 
-  # Niri + Noctalia Shell (Home Manager managed)
+  # Niri + DankMaterialShell (Home Manager managed)
   #
   # Why:
-  # - You want to "switch niri to use noctalia-shell".
+  # - Replace Noctalia with DankMaterialShell (DMS).
   # - Niri doesn't have an official "shell" concept like GNOME; the practical
   #   equivalent is to run your shell UI as a user service inside the session.
+  #
+  # Implementation:
+  # - Use the upstream DMS Home Manager module (`programs.dank-material-shell.*`)
+  #   which provides a user systemd service (`dms`) when `systemd.enable = true`.
   #
   # Note:
   # - This enables Niri via Home Manager. It does not register a login-session
@@ -351,36 +359,46 @@ in
     };
   };
 
-  # Start `noctalia-shell` automatically in your graphical session.
+  # Start DankMaterialShell (DMS) automatically in your graphical session.
   #
   # Why:
-  # - Make Noctalia behave like the "shell" layer when you use Niri (and other
-  #   Wayland sessions too).
+  # - Make DMS behave like the "shell" layer when you use Niri (and other Wayland
+  #   sessions too).
   #
   # If you only want it under Niri specifically:
   # - we can refine `WantedBy`/`PartOf` to bind to a Niri-specific target, but that
   #   depends on how your session is started (and whether a stable `niri.service`
   #   exists in your user unit graph).
-  systemd.user.services.noctalia-shell = {
-    Unit = {
-      Description = "Noctalia Shell (user)";
-      PartOf = [ "graphical-session.target" ];
-      After = [ "graphical-session.target" ];
-    };
-    Service = {
-      Type = "simple";
-      ExecStart = "${pkgs.noctalia-shell}/bin/noctalia-shell";
-      Restart = "on-failure";
-      RestartSec = 2;
-
-      # Small hardening baseline (optional, safe defaults for user services).
-      NoNewPrivileges = true;
-      PrivateTmp = true;
-    };
-    Install = {
-      WantedBy = [ "graphical-session.target" ];
-    };
-  };
+  # NOTE: Noctalia autostart disabled; replaced by DankMaterialShell (DMS).
+  #
+  # What I got wrong earlier:
+  # - I treated "shell autostart" as something we needed to hand-roll for every shell.
+  # How I corrected it:
+  # - DMS provides an upstream Home Manager module that includes a `dms` user service,
+  #   so we enable that instead of maintaining our own unit here.
+  #
+  # systemd.user.services.noctalia-shell = {
+  #   Unit = {
+  #     Description = "Noctalia Shell (user)";
+  #     PartOf = [ "graphical-session.target" ];
+  #     After = [ "graphical-session.target" ];
+  #   };
+  #
+  #   Service = {
+  #     Type = "simple";
+  #     ExecStart = "${pkgs.noctalia-shell}/bin/noctalia-shell";
+  #     Restart = "on-failure";
+  #     RestartSec = 2;
+  #
+  #     # Small hardening baseline (optional, safe defaults for user services).
+  #     NoNewPrivileges = true;
+  #     PrivateTmp = true;
+  #   };
+  #
+  #   Install = {
+  #     WantedBy = [ "graphical-session.target" ];
+  #   };
+  # };
 
   programs.ghostty = {
     enable = true;
@@ -509,6 +527,30 @@ in
   # hydenix home-manager options go here
   hydenix.hm.enable = true;
   hydenix.hm.dolphin.enable = false;
+
+  # DankMaterialShell (DMS)
+  #
+  # Why:
+  # - Replace Noctalia with DMS.
+  # - Let the upstream module manage packages + a robust user systemd unit.
+  programs.dank-material-shell = {
+    enable = true;
+
+    # Start DMS automatically when a Wayland graphical session starts.
+    systemd.enable = true;
+
+    # NOTE: Upstream DMS has a `homeModules.niri` module for Niri integration, but the
+    # base `homeModules.dank-material-shell` does NOT expose `programs.dank-material-shell.niri.*`.
+    #
+    # If you want DMS-managed Niri keybinds/spawn/includes later, we can import:
+    #   inputs.dms.homeModules.niri
+    # and then configure the Niri integration options that module provides.
+    #
+    # niri = {
+    #   enableKeybinds = true;
+    #   enableSpawn = true;
+    # };
+  };
 
   # This is the setting Hydenix uses as the source-of-truth on rebuild.
   hydenix.hm.theme.active = desiredTheme;
