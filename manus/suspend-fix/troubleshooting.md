@@ -1,25 +1,31 @@
-# Troubleshooting — Suspend/Resume failure (repeating underscore, no TTY switch)
+# Troubleshooting — Suspend/Hibernate hangs (“A stop job is running …”) from active desktop
 #
 # Purpose
-# - This file is the *logbook* for suspend/resume debugging.
+# - This file is the *logbook* for suspend/hibernate debugging.
 # - Keep raw command output here so it survives context resets and can be compared across attempts.
 #
-# Symptom (reported)
-# - Resume shows a screen with a repeating underscore cursor.
-# - Ctrl+Alt+F* does not switch to a TTY.
-# - This suggests a deeper resume wedge (kernel/DRM/GPU) rather than just a compositor crash.
+# Symptom (updated)
+# - Suspending/hibernating from the **login screen** works reliably.
+# - Suspending/hibernating from the **active desktop session** can hang for a long time on:
+#   “A stop job is running …”
+# - You may briefly be able to switch to a TTY (e.g. Ctrl+Alt+F3), which strongly suggests
+#   the OS is alive and systemd is **waiting for a unit to stop**.
+#
+# Primary goal of this guide
+# - Identify the exact **blocking systemd unit** that is causing the stop-job countdown.
+# - Apply a targeted, declarative fix (timeouts/order/dependencies) once the unit is known.
 
 ---
 
 ## 0) Safety / recovery notes (read before testing)
-If resume wedges and your input appears dead:
+If suspend/hibernate appears stuck on a stop job:
 
-- Try waiting 60–90 seconds: some systems take a long time to reinitialize GPU on resume.
-- If you can, try Magic SysRq (if enabled by your kernel settings):
-  - REISUB sequence is a common safe reboot procedure.
-  - If SysRq is disabled in your system, note it below.
-- If nothing works, you may be forced to hold the power button. When that happens:
-  - The most useful logs are in the *previous boot* (`journalctl -b -1`), so capture those right after you boot back up.
+- Wait long enough to confirm it’s actually stuck (e.g. 1–3 minutes).
+- Photograph or write down the **exact unit name** shown in the “A stop job is running …” line.
+  - Even if it’s truncated, partial names help.
+- If you can briefly reach a TTY, that’s a good sign: the system is alive and systemd is waiting.
+- If you must hard power off:
+  - The most useful evidence is the *previous boot* journal (`journalctl -b -1`), so capture it immediately after booting back up.
 
 Record every hard power cycle below; it helps correlate “what changed” with “what failed”.
 
@@ -34,14 +40,16 @@ Record every hard power cycle below; it helps correlate “what changed” with 
 - Internal display only / external monitor / dock:
 - Kernel version (from `uname -a`):
 
-### Session info (before suspending)
-- Desktop/compositor at time of suspend: (Hyprland / Niri / Plasma / other)
+### Session info (before suspending/hibernating)
+- Desktop/compositor at time of action: (Hyprland / Niri / Plasma / other)
 - Display manager: (SDDM / GDM / greetd / other)
 - Wayland or X11:
+- Were any “heavy” apps running? (Steam, browsers w/ video, GPU apps, Docker, VM, etc.)
 
-### NixOS config flags relevant to suspend
+### NixOS config flags relevant to sleep
 - `hydenix.system.nvidiaSleepFix.enable`:
 - `hydenix.system.nvidiaSleepFix.forceDeepSleep`:
+- `hydenix.system.nvidiaSleepFix.enableVramPreservation`:
 - `hydenix.system.nvidiaSleepFix.restartDisplayManagerOnResume`:
 - `hardware.nvidia.open`:
 
@@ -49,25 +57,32 @@ Record every hard power cycle below; it helps correlate “what changed” with 
 
 ## 2) Repro protocol (use the same steps each time)
 
-### Short suspend test (baseline)
-1. Save work and close GPU-heavy apps.
+### Baseline: suspend from login screen (control)
+1. Log out to the display manager (login screen).
 2. Suspend.
 3. Wait ~30 seconds.
 4. Resume.
 5. Outcome: (Success / Fail)
-6. If fail: did keyboard LEDs toggle? did screen backlight change? fans spin?
 
-### Medium suspend test
-1. Suspend.
-2. Wait 5–15 minutes.
-3. Resume.
-4. Outcome: (Success / Fail)
+### Main repro: suspend from active desktop (problem case)
+1. Log in and reproduce your normal “working desktop” state.
+2. Suspend.
+3. If you see “A stop job is running …”:
+   - record the unit name shown on-screen (write it below in section 4)
+   - wait 1–3 minutes to see whether it completes or times out
+4. Outcome: (Success / Fail / Hangs on stop job)
 
-### Notes / variables
+### Optional: hibernate from active desktop (problem case)
+1. Hibernate.
+2. If you see a stop-job line, record the unit name.
+3. Outcome: (Success / Fail / Hangs on stop job)
+
+### Notes / variables (keep controlled)
 - Power state: (on battery / plugged in)
 - Lid closed? (yes/no)
 - External monitor connected? (yes/no)
 - Bluetooth devices connected? (yes/no)
+- Network state: (wifi/ethernet/vpn)
 
 ---
 
@@ -75,9 +90,9 @@ Record every hard power cycle below; it helps correlate “what changed” with 
 
 > Notes:
 > - You’re using Nushell; commands below are written as one-liners you can paste.
-> - Run these **after a successful resume**, or **after rebooting from a failed resume** (use `-b -1`).
+> - The most important thing now is to capture evidence of **which unit blocked sleep**.
 
-### 3.1 Suspend mode capability and current selection
+### 3.1 Suspend mode capability and current selection (still useful)
 ```/dev/null/nu#L1-6
 # Shows which suspend modes are available and which is active (brackets).
 cat /sys/power/mem_sleep;
@@ -87,10 +102,9 @@ Paste output here:
 - Output:
   - 
 
-### 3.2 Previous boot logs (most important after a hard power cycle)
+### 3.2 Capture previous boot logs (most important after a hard power cycle)
 ```/dev/null/nu#L1-8
 # Capture previous boot logs to a file for later review.
-# Note: adjust the output path if you prefer a different location.
 journalctl -b -1 --no-pager | save -f manus/suspend-fix/logs/journal-b-1.txt;
 ```
 
@@ -99,41 +113,46 @@ Paste a short summary here:
 - File saved: `manus/suspend-fix/logs/journal-b-1.txt`
 - Quick notes:
 
-### 3.3 Filtered suspend/resume-related slice
-```/dev/null/nu#L1-12
-# Filter for common suspend/resume and GPU keywords.
+### 3.3 Filter specifically for stop-job and unit-stop blockers (key slice)
+```/dev/null/nu#L1-16
+# Filter for stop-job countdowns and the unit stop/start lines around them.
 journalctl -b -1 --no-pager
 | lines
-| where {|l| $l =~ 'PM:|systemd-sleep|suspend|resume|nvidia|NVRM|Xid|drm|i915|amdgpu|ACPI|s2idle|S3' }
-| save -f manus/suspend-fix/logs/journal-b-1-filtered.txt;
+| where {|l|
+    $l =~ 'A stop job is running' or
+    $l =~ 'Stopped ' or
+    $l =~ 'Stopping ' or
+    $l =~ 'Timed out waiting for' or
+    $l =~ 'Failed to stop' or
+    $l =~ 'Reached target Sleep' or
+    $l =~ 'suspend.target|hibernate.target|sleep.target|systemd-sleep'
+  }
+| save -f manus/suspend-fix/logs/journal-b-1-stopjob.txt;
 ```
 
-Paste highlights here (e.g., first error, first warning, last lines before crash):
+Paste highlights here (especially the exact unit names mentioned):
 - Highlights:
-  - 
+  -
 
-### 3.4 systemd sleep service status (after a *successful* resume)
-```/dev/null/nu#L1-12
-# Look for sleep hooks and failures in this boot.
-journalctl -b --no-pager
-| lines
-| where {|l| $l =~ 'systemd-sleep|sleep.target|suspend.target|nvidia-suspend|nvidia-resume|nvidia-hibernate' }
-| save -f manus/suspend-fix/logs/journal-b-sleep.txt;
+### 3.4 Identify long-running units during a stuck attempt (only if you can reach a TTY)
+```/dev/null/nu#L1-6
+# Shows current jobs and can reveal what systemd is waiting on (if still responsive).
+systemctl list-jobs;
 ```
 
-Paste highlights:
-- Highlights:
-  - 
+Paste output here:
+- Output:
+  -
 
-### 3.5 Kernel ring buffer (if available after reboot)
+### 3.5 Kernel ring buffer (keep for NVIDIA/DRM context)
 ```/dev/null/nu#L1-7
-# Kernel messages can contain NVIDIA Xid or DRM errors around resume.
+# Kernel messages can contain NVIDIA Xid or DRM errors (secondary signal here).
 dmesg | save -f manus/suspend-fix/logs/dmesg-current.txt;
 ```
 
 Paste highlights:
 - Highlights:
-  - 
+  -
 
 ---
 
@@ -166,26 +185,34 @@ Paste highlights:
 
 ## 5) Triage guide (how to interpret common outcomes)
 
-### A) No TTY switch, no SSH, keyboard appears dead
-Likely: kernel/firmware/GPU resume wedge.
-Next levers (least → more invasive):
-- Prefer `deep` suspend over `s2idle` (`mem_sleep_default=deep`).
+### A) Hangs at “A stop job is running …” only from active desktop
+Likely: a systemd unit (often user/session-adjacent) is slow/hung when stopping.
+Next levers (in order):
+1) Identify the unit name from the on-screen stop-job line and from `journal-b-1-stopjob.txt`.
+2) Apply a **targeted** fix for that unit:
+   - reduce `TimeoutStopSec=`
+   - fix ordering/dependencies
+   - stop the real underlying blocker (mounts, network, portals, user services, etc.)
+3) Re-test from active desktop.
+
+### B) Suspend/hibernate completes but resume graphics is black/frozen
+Likely: GPU/DM/compositor resume path.
+Next levers:
+- NVIDIA resume mitigations (VRAM preservation toggle).
+- As workaround only: restart `display-manager.service` after resume.
+
+### C) Can’t switch TTY / input appears dead
+Likely: kernel/firmware/GPU wedge.
+Next levers:
+- Prefer `deep` suspend if available.
 - NVIDIA VRAM preservation kernel params.
 - Consider trying NVIDIA open vs closed kernel modules (policy choice; document carefully).
 
-### B) TTY works but graphics is black / frozen
-Likely: compositor/DM didn’t recover.
+### D) Works from login screen but flaky from desktop
+Likely: interaction with running apps/services.
 Next levers:
-- DM restart-on-resume workaround.
-- Wayland compositor-specific tweaks.
-- Look for `nvidia` or `drm` errors but system itself is alive.
-
-### C) Resume works sometimes but not reliably
-Likely: timing/race/firmware interaction with s2idle, external monitors, docks, or PRIME.
-Next levers:
-- Test variables one at a time: external monitor, lid state, power source.
-- Prefer `deep` if available.
-- Capture consistent logs across both success and failure.
+- Re-test with one variable at a time (external monitor, VPN, Steam, browsers/video, etc.)
+- Keep attempt logs consistent and capture stop-job evidence each time.
 
 ---
 

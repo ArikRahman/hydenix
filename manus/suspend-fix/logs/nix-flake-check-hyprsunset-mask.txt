@@ -1,0 +1,35 @@
+warning: Git tree '/home/hydenix/Documents/dotfiles' is dirty
+evaluating flake...
+checking flake output 'nixosConfigurations'...
+checking NixOS configuration 'nixosConfigurations.hydenix'...
+error:
+       … while checking flake output 'nixosConfigurations'
+         at /nix/store/70ah5rjy51663013svfzm2404rn7qx9j-source/flake.nix:119:7:
+          118|     {
+          119|       nixosConfigurations.hydenix = hydenixConfig;
+             |       ^
+          120|       nixosConfigurations.default = hydenixConfig;
+
+       … while checking the NixOS configuration 'nixosConfigurations.hydenix'
+         at /nix/store/70ah5rjy51663013svfzm2404rn7qx9j-source/flake.nix:119:7:
+          118|     {
+          119|       nixosConfigurations.hydenix = hydenixConfig;
+             |       ^
+          120|       nixosConfigurations.default = hydenixConfig;
+
+       … while evaluating the option `system.build.toplevel':
+
+       … while evaluating definitions from `/nix/store/54jfyhwggfbsc5cr5c5qgbnwadkd84x8-source/nixos/modules/system/activation/top-level.nix':
+
+       … while evaluating the option `assertions':
+
+       … while evaluating definitions from `/nix/store/l2pl49aczg4lhid2xgnr497z439sx3sm-source/nixos/common.nix':
+
+       (stack trace truncated; use '--show-trace' to show the full, detailed trace)
+
+       error: attribute 'systemd.user.services.hyprsunset.Service.ExecStart' already defined at /nix/store/70ah5rjy51663013svfzm2404rn7qx9j-source/modules/hm/default.nix:999:7
+       at /nix/store/70ah5rjy51663013svfzm2404rn7qx9j-source/modules/hm/default.nix:1011:5:
+         1010|   systemd.user.services."hyprsunset".Service = {
+         1011|     ExecStart = "${pkgs.coreutils}/bin/false";
+             |     ^
+         1012|   };

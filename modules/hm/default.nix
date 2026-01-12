@@ -298,7 +298,7 @@ in
     atool
     httpie
     discordo # terminal discord
-    blesh
+    blesh # oh my bash
     fzf
     yq # yaml processor and json as well
     lazygit
@@ -309,6 +309,7 @@ in
     zenith # more traditional top based on rust
     nvd # useful for seeing difference in nix generations. syntax e.g.
     # ```nvd diff /nix/var/nix/profiles/system-31-link /nix/var/nix/profiles/system-30-link```
+    gdb # for debugging
 
     #LSP and language tooling
     clojure-lsp
@@ -978,6 +979,38 @@ in
   #     WantedBy = [ "graphical-session.target" ];
   #   };
   # };
+
+  # Hard-disable hyprsunset even if some upstream module (or a previous generation)
+  # tries to enable it.
+  #
+  # Why: your journal shows `hyprsunset.service` repeatedly restarting and failing
+  # under `niri` ("Compositor doesn't support hyprland-ctm-control-v1"). That means
+  # something is still generating/enabling the user service (likely via Home Manager),
+  # and systemd keeps auto-restarting it.
+  #
+  # NOTE (got wrong earlier): `systemd.user.services.<name>` in Home Manager expects
+  # an *attribute set* describing the unit (Unit/Service/Install). It does *not* accept
+  # `enable = false` here (that option is not the right shape in this module), which
+  # causes evaluation to fail.
+  #
+  # This block defines an inert unit and does not install/want it anywhere, so it
+  # won't be pulled into `graphical-session.target`.
+  systemd.user.services.hyprsunset = {
+    Unit = {
+      Description = "Hyprsunset (night light) (disabled via Home Manager override)";
+    };
+
+    Service = {
+      Type = "oneshot";
+      ExecStart = "${pkgs.coreutils}/bin/true";
+      RemainAfterExit = true;
+    };
+
+    Install = {
+      WantedBy = [ ];
+    };
+  };
+
   hydenix.hm.hyprland.extraConfig = ''
     cursor {
         no_hardware_cursors = true

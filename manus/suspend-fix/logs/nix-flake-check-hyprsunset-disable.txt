@@ -1,0 +1,43 @@
+warning: Git tree '/home/hydenix/Documents/dotfiles' is dirty
+evaluating flake...
+checking flake output 'nixosConfigurations'...
+checking NixOS configuration 'nixosConfigurations.hydenix'...
+error:
+       … while checking flake output 'nixosConfigurations'
+         at /nix/store/n302lhz1k8m49ncdw068swn16rn7wnxh-source/flake.nix:119:7:
+          118|     {
+          119|       nixosConfigurations.hydenix = hydenixConfig;
+             |       ^
+          120|       nixosConfigurations.default = hydenixConfig;
+
+       … while checking the NixOS configuration 'nixosConfigurations.hydenix'
+         at /nix/store/n302lhz1k8m49ncdw068swn16rn7wnxh-source/flake.nix:119:7:
+          118|     {
+          119|       nixosConfigurations.hydenix = hydenixConfig;
+             |       ^
+          120|       nixosConfigurations.default = hydenixConfig;
+
+       … while evaluating the option `system.build.toplevel':
+
+       … while evaluating definitions from `/nix/store/54jfyhwggfbsc5cr5c5qgbnwadkd84x8-source/nixos/modules/system/activation/top-level.nix':
+
+       … while evaluating the option `warnings':
+
+       … while evaluating definitions from `/nix/store/54jfyhwggfbsc5cr5c5qgbnwadkd84x8-source/nixos/modules/system/boot/systemd.nix':
+
+       … while evaluating the option `systemd.services.home-manager-hydenix.serviceConfig':
+
+       … while evaluating definitions from `/nix/store/l2pl49aczg4lhid2xgnr497z439sx3sm-source/nixos':
+
+       … while evaluating the option `home-manager.users.hydenix.home.file."/home/hydenix/.config/systemd/user/hyprsunset.service".source':
+
+       … while evaluating definitions from `/nix/store/l2pl49aczg4lhid2xgnr497z439sx3sm-source/modules/misc/xdg.nix':
+
+       … while evaluating the option `home-manager.users.hydenix.xdg.configFile."systemd/user/hyprsunset.service".source':
+
+       … while evaluating definitions from `/nix/store/l2pl49aczg4lhid2xgnr497z439sx3sm-source/modules/systemd.nix':
+
+       (stack trace truncated; use '--show-trace' to show the full, detailed trace)
+
+       error: A definition for option `home-manager.users.hydenix.systemd.user.services.hyprsunset.enable' is not of type `attribute set of (boolean or signed integer or string or absolute path or list of (boolean or signed integer or string or absolute path))'. TypeError: Definition values:
+       - In `/nix/store/n302lhz1k8m49ncdw068swn16rn7wnxh-source/modules/hm': false
