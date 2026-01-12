@@ -337,6 +337,40 @@ in
     clojure
     clojure-lsp
 
+    # Rust toolchain (nixpkgs method; pinned by your flake input)
+    #
+    # Why:
+    # - The NixOS Rust wiki recommends installing via nixpkgs for simplicity + determinism.
+    # - This provides a stable toolchain suitable for most Rust development without rustup.
+    #
+    # Includes:
+    # - `rustc` + `cargo` for compiling/building
+    # - `rustfmt` + `clippy` for formatting/linting
+    # - `rust-analyzer` for editor LSP
+    #
+    # NOTE:
+    # - Some editor setups need rust source (`RUST_SRC_PATH`) to be set; handled via
+    #   `home.sessionVariables.RUST_SRC_PATH` below.
+    rustc
+    cargo
+    rustfmt
+    clippy
+    rust-analyzer
+
+    # C/FFI helpers commonly needed by Rust crates (bindgen, openssl-sys, etc.)
+    #
+    # Why:
+    # - The NixOS Rust wiki notes that crates using `bindgen` and crates that link against
+    #   system libs often need:
+    #   - `pkg-config` to locate libraries
+    #   - a C compiler / libc headers (provided by `clang` in typical setups)
+    #
+    # NOTE:
+    # - You may still need to add specific libs (e.g. `openssl`, `sqlite`) per-project.
+    # - Keeping these here helps with the common “linking with cc failed” class of errors.
+    pkg-config
+    clang
+
     uv
     nim
 
@@ -686,7 +720,20 @@ in
   home.sessionVariables.EMACSDIR = "${config.xdg.configHome}/emacs";
   home.sessionVariables.DOOMDIR = "${config.xdg.configHome}/doom";
   home.sessionVariables.DOOMLOCALDIR = "${config.xdg.dataHome}/doom";
-  home.sessionVariables.DOOMPROFILELOADFILE = "${config.xdg.stateHome}/doom-profiles-load.el";
+  home.sessionVariables.DOOMPROFILELOADFILE = "${config.xdg.configHome}/doom/profiles.el";
+
+  # Rust tooling support
+  #
+  # Why:
+  # - The NixOS Rust wiki notes some tools (notably certain rust-analyzer setups)
+  #   require access to the Rust stdlib source via `RUST_SRC_PATH`.
+  # - `rustPlatform.rustLibSrc` points at the correct lib source path in nixpkgs.
+  #
+  # NOTE:
+  # - If you explicitly use rust-analyzer from nixpkgs (as you do above), many setups
+  #   won’t need this, but it’s a harmless compatibility improvement and makes
+  #   editor configuration more reliable.
+  home.sessionVariables.RUST_SRC_PATH = "${pkgs.rustPlatform.rustLibSrc}";
 
   # NOTE (mistake & correction):
   # I previously referenced `config.home.sessionPath` while defining `home.sessionPath`,
