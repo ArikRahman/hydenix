@@ -287,6 +287,7 @@ in
     reaper
     logseq
     obs-studio
+    webex
 
     seahorse
 
@@ -335,6 +336,9 @@ in
     babashka
     clojure
     clojure-lsp
+
+    uv
+    nim
 
     jdk25 # jvm will outperform graalvm AOT with implementation of project leydus
     # graalvmPackages.graalvm-ce
