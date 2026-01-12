@@ -86,9 +86,13 @@
 
   # NOTE: Leave these off unless you specifically confirm they help.
   # - `restartDisplayManagerOnResume` is a workaround that can kill your session.
-  # - `forceDeepSleep` is hardware-dependent (s2idle vs deep).
+  #
+  # Deep sleep vs s2idle:
+  # - Your failure mode (resume wedges so hard you can't switch TTYs) fits the class of
+  #   issues that often improve by preferring S3 "deep" suspend over "s2idle".
+  # - This is reversible: set it back to `false` if your firmware doesn’t support S3 well.
+  hydenix.system.nvidiaSleepFix.forceDeepSleep = true;
   # hydenix.system.nvidiaSleepFix.restartDisplayManagerOnResume = true;
-  # hydenix.system.nvidiaSleepFix.forceDeepSleep = true;
 
   # Niri (Wayland compositor) — optional, installed alongside Hyprland/HyDE
   #

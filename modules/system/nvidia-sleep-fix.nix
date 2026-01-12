@@ -67,6 +67,42 @@ in
         Use this if long `s2idle` sleeps correlate with resume black screens.
       '';
     };
+
+    # NVIDIA VRAM preservation parameters to improve resume reliability on some systems.
+    #
+    # Why:
+    # - Some NVIDIA resume failures are caused by VRAM allocations not being restored cleanly.
+    # - Enabling PreserveVideoMemoryAllocations can help the driver restore state after suspend.
+    #
+    # Trade-offs:
+    # - This can increase suspend/resume time and write data to a temp path.
+    # - It is not universally beneficial; keep it off unless it clearly improves your resume behavior.
+    enableVramPreservation = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = ''
+        If enabled, adds NVIDIA kernel params to preserve/restore VRAM allocations across suspend:
+        - `nvidia.NVreg_PreserveVideoMemoryAllocations=1`
+        - `nvidia.NVreg_TemporaryFilePath=/var/tmp`
+
+        Enable this if suspend/resume wedges (e.g., repeating underscore / no TTY) and deep sleep alone
+        does not resolve the issue.
+      '';
+    };
+
+    # Where NVIDIA stores temporary files used by VRAM preservation (when enabled).
+    #
+    # Why:
+    # - NVIDIA recommends pairing VRAM preservation with a writable temp path.
+    # - `/var/tmp` is typically safe and persistent across reboots.
+    vramTemporaryFilePath = lib.mkOption {
+      type = lib.types.str;
+      default = "/var/tmp";
+      description = ''
+        Temporary file path used when `enableVramPreservation = true`.
+        Defaults to `/var/tmp`.
+      '';
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -133,6 +169,13 @@ in
       # Why: Some firmware/GPU combinations resume more reliably from S3 (deep)
       # than from s2idle (modern standby).
       "mem_sleep_default=deep"
+    ]
+    ++ lib.optionals cfg.enableVramPreservation [
+      # NVIDIA VRAM preservation:
+      # - Helps some systems restore graphics state more reliably after suspend.
+      # - Keep this toggleable; it can have performance/disk I/O trade-offs.
+      "nvidia.NVreg_PreserveVideoMemoryAllocations=1"
+      "nvidia.NVreg_TemporaryFilePath=${cfg.vramTemporaryFilePath}"
     ];
 
     # Improve the odds that NVIDIA's resume helpers are available.

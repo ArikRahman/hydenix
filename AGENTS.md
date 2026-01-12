@@ -2,11 +2,11 @@
 
 ## Project Overview
 Hydenix is a NixOS configuration template using Flakes. It allows users to customize their NixOS setup, add packages, and configure themes. Based off https://github.com/richen604/hydenix
-<<<<<<< HEAD
-Custom Niri flake is also being used at https://github.com/sodiboo/niri-flake
+
+Custom Niri flake is also being used at https://github.com/sodiboo/niri-flake, main environment of choice
 =======
 My repo is https://github.com/ArikRahman/hydenix
->>>>>>> origin/main
+
 
 ## Key Files and Directories
 
