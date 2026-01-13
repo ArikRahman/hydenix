@@ -6,3 +6,4 @@ reference/
 .lsp/
 .clj-kondo/
 reference-target/
+manus/suspend-fix/logs

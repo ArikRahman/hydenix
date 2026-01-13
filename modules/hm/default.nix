@@ -604,8 +604,19 @@ in
   programs.bash = {
     enable = true;
     bashrcExtra = ''
-      [[ $- == *i* ]] && source -- "$(blesh-share)"/ble.sh --attach=none
-      [[ ! ''${BLE_VERSION-} ]] || ble-attach
+      # Only attach ble.sh in *real* interactive terminals.
+      # This avoids spurious job-control noise like:
+      #   bash: fg: current: no such job
+      #   [ble: exit 1]
+      #
+      # We require:
+      # - interactive shell ($- contains i)
+      # - a real TTY on stdin/stdout
+      # - not running inside a dumb terminal
+      if [[ $- == *i* ]] && [[ -t 0 ]] && [[ -t 1 ]] && [[ ''${TERM:-} != dumb ]]; then
+        source -- "$(blesh-share)"/ble.sh --attach=none
+        [[ ! ''${BLE_VERSION-} ]] || ble-attach
+      fi
     '';
   };
 
