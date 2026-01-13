@@ -300,6 +300,8 @@ in
     discordo # terminal discord
     blesh # oh my bash
     fzf
+    dust
+    sqlite
     yq # yaml processor and json as well
     lazygit
     ripgrep-all # rga, ripgrep with extra file format support
